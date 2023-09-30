@@ -2,6 +2,7 @@
 Works with <a href=https://nodejs.org/en/download/current>Node.js</a>. Download files and create a folder on desktop. 
 Navigate to folder via terminal or cmd and run:
   node login.js
+<br>
 Notes
 <hr>
 I used port 3000 for Node.js. Change line 7 to define your own.<br>
