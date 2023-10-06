@@ -104,14 +104,13 @@ app.post('/create', (req, res) => {
 	let password = req.body.password;
 	let email = req.body.email;
 	let confirm_email = req.body.confirmemail;
-	let count = 0;
 
 	
 	conn.query('SELECT * FROM registration WHERE username=? OR email=?', [username, email],
 	function(error, results, field){
 		if(error) throw error;
 		if(!results.length){
-			conn.query('INSERT INTO registration (username,password, count, email) VALUES(?,?,?,?)', [username, password, count, email], function (err, result, fields){
+			conn.query('INSERT INTO registration (username,password, email) VALUES(?,?,?)', [username, password, email], function (err, result, fields){
 				if(error) throw error;
 			});
 			res.send("User created");
