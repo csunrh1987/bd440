@@ -23,4 +23,24 @@
 		</form>
 		<hr>
 		Already have an account? <a href='/login'>Login here.</a>
+
+		// Function to validate email fields, email fields cannot be empty or different.
+    <script>
+        function validateEmail() {
+            var email = document.getElementById("email").value;
+            var confirmEmail = document.getElementById("confirmEmail").value;
+
+
+            if (email === "" || confirmEmail === "") {
+                alert("Email fields cannot be empty");
+                return false;
+            }
+
+            if (email !== confirmEmail) {
+                alert("Email fields do not match");
+                return false;
+            }
+            return true;
+        }
 	</body>
+</html>
