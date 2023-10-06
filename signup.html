@@ -4,16 +4,16 @@
 	</head>
 	<body>
 		<h1>Create new account</h1>
-		<form action="/create" method="post">
+		<form action="/create" method="post" onsubmit="return validateEmail()">
 			
 			<label for="inputUser">Username:</label><br>
 			<input type="text" name="username"><br>
 			
 			<label for="inputEmail">Email:</label><br>
-			<input type="text" name="email"><br>
+			<input type="text" name="email" id="email"><br>
 			
 			<label for="confirmEmail">Confirm Email:</label><br>
-			<input type="text" name="confirmemail"><br>
+			<input type="text" name="confirmemail" id="confirmEmail"><br>
 			
 			
 			<label for="inputPass">Password:</label><br>
