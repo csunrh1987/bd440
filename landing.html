@@ -1,17 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+        <style>
+            body{
+				background: #f2f2f2;
+				font-family: Consolas, monaco, monospace;
+			}
+
+            h1{
+				text-align: center;
+				color: black;
+				font-size: 65px;
+			}
+            p{
+                text-align: center;
+                font-size: 20px;
+                padding: 0px 0px;
+            }
+
+            div.form {
+				text-align: center;
+				font-size: 20px;
+			}
+            
+            form [type = text] {
+				width: 15%;
+				border: 2px solid black;
+				border-radius:4px;
+				padding: 5px 5px;
+				margin: 5px;
+				box-sizing: border-box;
+				font-family: inherit;
+            }
+
+            button{
+				background-color: lightblue;
+				border: none;
+				color: black;
+				border-radius: 4px;
+				padding: 8px 16px;
+				text-decoration: none;
+				margin: 4px 2px;
+				cursor: pointer;
+				transition-duration:0.2s;
+				font-family: inherit;
+                font-weight: bold;
+			}
+
+			button:hover {
+                background-color: black;
+				color: lightblue;
+            }
+        </style>
 		<title>Welcome</title>
 	</head>
 	<body>
 		<h1>Welcome</h1>
-		<p id=counter>Counting data</p>		
+		<p id=counter>Counting data</p>	
+        <div class="form">	
 		<form action='/update' method='get'>
-			<input type="text" id="input">
+			<input type="text" id="input"><br>
 			<button id="get">Submit</button>
 		</form>
+        </div>
 		<a href="\">Logout</a>
-		
 		<script>
 			/*const baseUrl = 'http://localhost:3000/update';
 			const input;
