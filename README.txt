@@ -12,4 +12,7 @@ Randy Herrera
   6. Testing of signup and login functionality.
   7. Recorded demo video of complete project. 
 
-
+Riley Espiritu
+	1. Used CSS to stylize each .html page.
+		a. Changed font, background color, alignment, forms, and submit button.
+	2. Reformatted code to properly fit CSS elements.
