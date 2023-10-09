@@ -16,3 +16,7 @@ Riley Espiritu
 	1. Used CSS to stylize each .html page.
 		a. Changed font, background color, alignment, forms, and submit button.
 	2. Reformatted code to properly fit CSS elements.
+
+
+Javier Torres
+        1. Added script to check if email matches. Prompts user if email is not matching.
