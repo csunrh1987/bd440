@@ -10,13 +10,13 @@
             h1{
 				text-align: center;
 				color: black;
-				font-size: 65px;
+				font-size: 45px;
+				margin-bottom: 15px;
 			}
-            p{
-                text-align: center;
-                font-size: 20px;
-                padding: 0px 0px;
-            }
+
+			h2{
+				margin-bottom: 15px;
+			}
 
             div.form {
 				text-align: center;
@@ -51,18 +51,45 @@
                 background-color: black;
 				color: lightblue;
             }
+
+			table, th, td{
+				width: 30%;
+				border: 1.5px solid black;
+				border-collapse: collapse;
+				margin-bottom: 15px;
+			}
+			th{
+				background-color: lightblue;
+			}
         </style>
 		<title>Welcome</title>
 	</head>
 	<body>
 		<h1>Welcome</h1>
-		<p id=counter>Counting data</p>	
         <div class="form">	
-		<form action='/update' method='get'>
-			<input type="text" id="input"><br>
-			<button id="get">Submit</button>
+		<form id="search-form">
+			<label for="category">Enter a category: </label>
+			<input type="text" id="input" placeholder="Category">
+			<button type="search">Search</button>
 		</form>
         </div>
+		<div id="table">
+			<h2>Results:</h2>
+			<table id="results-table">
+				<thead>
+					<tr>
+						<th>Items</th>
+						<th>Category</th>
+					</tr>
+					<tr>
+						<td>Test Item</td>
+						<td>Test Category</td>
+					</tr>
+				</thead>
+				<tbody id="results-body">
+                </tbody>
+			</table>
+		</div>
 		<a href="\">Logout</a>
 		<script>
 			/*const baseUrl = 'http://localhost:3000/update';
@@ -123,7 +150,4 @@
 		</script>
 	
 	</body>
-	<script>
-
-	</script>
 </html>
