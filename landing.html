@@ -110,6 +110,32 @@
                 </tbody>
 			</table>
 		</div>
+
+	<hr>java code<hr>
+	<div id="add-review">
+		<h2>Add a Review:</h2>
+    			<form id="review-form">
+        			<label for="itemSelect">Select an item:</label>
+        			<select id="itemSelect" name="itemSelect">
+            			<option value="Test Item">Test Item</option>
+            			<!-- We can add more items here -->
+        			</select>
+        				<br>
+        			<label for="ratingSelect">Select a rating:</label>
+        			<select id="ratingSelect" name="ratingSelect">
+            			<option value="excellent">Excellent</option>
+            			<option value="good">Good</option>
+            			<option value="fair">Fair</option>
+            			<option value="poor">Poor</option>
+        			</select>
+        				<br>
+        		<label for="reviewText">Review:</label>
+        			<textarea id="reviewText" name="reviewText" rows="4" cols="50"></textarea>
+        				<br>
+
+			        <button type="button" id="submitReview">Submit Review</button>
+    			</form>
+	</div>
 		<a href="\">Logout</a>
 		<script>
 			/*const baseUrl = 'http://localhost:3000/update';
