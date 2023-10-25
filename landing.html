@@ -82,16 +82,13 @@
 				<input type="text" id="inprice">
 			</form>
 		</div>		
-		
-		
-		
 		<hr>
 		<div class="form">	
-		<form id="search-form">
-			<label for="category">Enter a category: </label>
-			<input type="text" id="input" placeholder="Category">
-			<button type="search">Search</button>
-		</form>
+			<form id="search-form">
+				<label for="category">Enter a category: </label>
+				<input type="text" id="input" placeholder="Category">
+				<button type="search">Search</button>
+			</form>
         </div>
 		<div id="table">
 			<h2>Results:</h2>
@@ -111,88 +108,38 @@
 			</table>
 		</div>
 
-	<hr>java code<hr>
-	<div id="add-review">
-		<h2>Add a Review:</h2>
-    			<form id="review-form">
-        			<label for="itemSelect">Select an item:</label>
-        			<select id="itemSelect" name="itemSelect">
-            			<option value="Test Item">Test Item</option>
-            			<!-- We can add more items here -->
-        			</select>
-        				<br>
-        			<label for="ratingSelect">Select a rating:</label>
-        			<select id="ratingSelect" name="ratingSelect">
-            			<option value="excellent">Excellent</option>
-            			<option value="good">Good</option>
-            			<option value="fair">Fair</option>
-            			<option value="poor">Poor</option>
-        			</select>
-        				<br>
-        		<label for="reviewText">Review:</label>
-        			<textarea id="reviewText" name="reviewText" rows="4" cols="50"></textarea>
-        				<br>
-
-			        <button type="button" id="submitReview">Submit Review</button>
-    			</form>
-	</div>
+		<hr>java code<hr>
+		<div id="add-review">
+			<h2>Add a Review:</h2>
+				<form id="review-form">
+					<label for="itemSelect">Select an item:</label>
+					<select id="itemSelect" name="itemSelect">
+						<option value="Test Item">Test Item</option>
+						<!-- We can add more items here -->
+					</select>
+					<br>
+					<label for="ratingSelect">Select a rating:</label>
+					<select id="ratingSelect" name="ratingSelect">
+						<option value="excellent">Excellent</option>
+						<option value="good">Good</option>
+						<option value="fair">Fair</option>
+						<option value="poor">Poor</option>
+					</select>
+						<br>
+					<label for="reviewText">Review:</label>
+					<textarea id="reviewText" name="reviewText" rows="4" cols="50"></textarea>
+					<br>
+					<button type="button" id="submitReview">Submit Review</button>
+			</form>
+		</div>
+		<hr>
+		<h2>Create table button</h2>
+			<form action="/createtable" method="post">
+				<button type="submit" class="mybutton">Create table</button>
+		<hr>
 		<a href="\">Logout</a>
 		<script>
-			/*const baseUrl = 'http://localhost:3000/update';
-			const input;
-			window.addEventListener('load', launcher);
-			function launcher(){
-				const getBtn = document.getElementById('get');
-				input = document.getElementById('input');
-				getBtn.addEventListener('click', getCount);
-			}
-			
-			async function getCount(e) {
-				e.preventDefault();
-				const res = await fetch(baseUrl,
-				{
-				method: 'GET'
-				})
-				console.log(res);
-				const data = await res.json();
-				input.value = data.info;
-			}
-			
-			
-			
-			const getBtn = document.getElementById('get');
-			const input = document.getElementById('input');
-			const baseUrl = 'http://localhost:3000/update';
-			
-			window.addEventListener('load', getCount);
-			async function getCount(e) {
-				e.preventDefault();
-				const res = await fetch(baseUrl,
-				{
-				method: 'GET'
-				})
-				console.log(res);
-				const data = await res.json();
-				input.value = data.info;
-			}
-			
-			
-			
-			
-			
-			
-			getBtn.addEventListener('click', getCount);
-			async function getCount(e) {
-				e.preventDefault();
-				const res = await fetch(baseUrl,
-				{
-				method: 'GET'
-				})
-				console.log(res);
-				const data = await res.json();
-				input.value = data.info;
-			}*/
-			
+			//empty
 		</script>
 	
 	</body>
