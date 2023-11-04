@@ -153,6 +153,22 @@ app.post('/createtable', (req, res)=> {
 	})
 });
 
+//Search and display items in a category
+app.post('/searchcategory', (req, res) => {
+    const category = req.body.category;
+
+    conn.query("SELECT title, category FROM signupform.useritem WHERE category = ?", [category], (error, results) => {
+        if (error) throw error;
+		console.log(results);
+        const items = results.map(result => ({
+            title: result.title,
+            category: result.category,
+        }));
+
+        res.json(items); // Send the results as JSON
+    });
+});
+
 
 app.listen(port);
 
