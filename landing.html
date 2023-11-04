@@ -15,6 +15,7 @@
 			}
 
 			h2{
+				text-align: left;
 				margin-bottom: 15px;
 			}
 
@@ -81,32 +82,58 @@
 				<label for="inputPrice">Price: </label>
 				<input type="text" id="inprice">
 			</form>
-		</div>		
-		<hr>
+		</div>	
+
+		<hr>riley<hr>
 		<div class="form">	
-			<form id="search-form">
+			<form id="search-form" action="/searchcategory" method="POST">
 				<label for="category">Enter a category: </label>
-				<input type="text" id="input" placeholder="Category">
-				<button type="search">Search</button>
+				<input type="text" id="input" name="category" placeholder="Category">
+				<button type="submit">Search</button>
 			</form>
-        </div>
-		<div id="table">
-			<h2>Results:</h2>
-			<table id="results-table">
-				<thead>
-					<tr>
-						<th>Items</th>
-						<th>Category</th>
-					</tr>
-					<tr>
-						<td>Test Item</td>
-						<td>Test Category</td>
-					</tr>
-				</thead>
-				<tbody id="results-body">
-                </tbody>
-			</table>
+		<h2>Results:</h2>
+		<table id="results-table">
+			<thead>
+				<tr>
+					<th>Items</th>
+					<th>Category</th>
+				</tr>
+			</thead>
+			<tbody id="results-body">
+
+			</tbody>
+		</table>
 		</div>
+		<script>
+			const searchForm = document.getElementById("search-form");
+			const resultsTable = document.getElementById("results-table");
+			const resultsBody = document.getElementById("results-body");
+		
+			searchForm.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const category = document.getElementById("input").value;
+		
+				// Send a POST request to the server to fetch results for the given category
+				const response = await fetch("/searchcategory", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ category }),
+				});
+		
+				if (response.ok) {
+					const data = await response.json();
+					resultsBody.innerHTML = ""; // Clear previous results
+		
+					data.forEach(item => {
+						const row = document.createElement("tr");
+						row.innerHTML = `<td>${item.title}</td><td>${item.category}</td>`;
+						resultsBody.appendChild(row);
+					});
+				}
+			});
+		</script>
 
 		<hr>java code<hr>
 		<div id="add-review">
@@ -139,7 +166,7 @@
 		<hr>
 		<a href="\">Logout</a>
 		<script>
-			//empty
+			
 		</script>
 	
 	</body>
