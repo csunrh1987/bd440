@@ -69,18 +69,22 @@
 		<h1>Welcome</h1>
 		<div class="form">
 			<br>Add an item<br>
-			<form id="add-item">			
-				<label for="inputTitle">Title: </label>
-				<input type="text" id="intitle">
+			<form action="/additem" method="POST">			
+				<label for="inputTitle">Title</label>
+				<input type="text" name="intitle">
 				<br>
+				
 				<label for="inputDesc">Description: </label>
-				<input type="text" id="indescription">
+				<input type="text" name="indescription">
 				<br>
+				
 				<label for="inputCategory">Category: </label>
-				<input type="text" id="incategory">
+				<input type="text" name="incategory">
 				<br>
+				
 				<label for="inputPrice">Price: </label>
-				<input type="text" id="inprice">
+				<input type="text" name="inprice">
+				<button type="submit">Add Item</button>
 			</form>
 		</div>	
 
