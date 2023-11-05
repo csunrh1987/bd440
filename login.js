@@ -193,5 +193,72 @@ app.post('/searchcategory', (req, res) => {
 });
 
 
+
+// Handle the review submission
+app.post('/submitreview', (req, res) => {
+	const { item, rating, reviewText } = req.body;
+	const username = req.session.username;
+	const today = makeDate();
+
+	// Check if the user has already submitted three reviews today
+	conn.query('SELECT COUNT(*) AS reviewCount FROM reviews WHERE reviewer = ? AND date = ?', [username, today], (err, result) => {
+		if (err) {
+			return res.status(500).send(err);
+		}
+
+		const data = JSON.parse(JSON.stringify(result));
+		const reviewCountToday = data[0].reviewCount;
+
+		if (reviewCountToday >= 3) {
+			return res.status(403).send('You have already submitted three reviews today.');
+		}
+
+		// Check if the user is the creator of the item
+		conn.query('SELECT userid FROM useritem WHERE id = ?', [item], (err, result) => {
+			if (err) {
+				return res.status(500).send(err);
+			}
+
+			const itemData = JSON.parse(JSON.stringify(result));
+			const itemOwner = itemData[0].userid;
+
+			if (itemOwner === username) {
+				return res.status(403).send("You can't review your own item.");
+			}
+
+			// Insert the review into the database
+			const sql = 'INSERT INTO reviews (item, rating, review_text, reviewer, date) VALUES (?, ?, ?, ?, ?)';
+			conn.query(sql, [item, rating, reviewText, username, today], (err, result) => {
+				if (err) {
+					return res.status(500).send(err);
+				}
+				console.log('Review added to the database.');
+				return res.status(200).send('Review added to the database.');
+			});
+		});
+	});
+});
+
+
+
+
+
+
+
+
+// Creating a review table
+app.post('/createtable', (req, res) => {
+	const sql = 'CREATE TABLE IF NOT EXISTS reviews (id INT AUTO_INCREMENT PRIMARY KEY, item VARCHAR(255), rating INT, review_text TEXT, reviewer VARCHAR(255), date DATE)';
+	conn.query(sql, (err, result) => {
+		if (err) {
+			console.error('Error occurred while creating table:', err);
+			return res.status(500).send('An error occurred while creating the table.');
+		}
+		console.log('Reviews table created.');
+		return res.status(200).send('Reviews table created.');
+	});
+});
+
+
 app.listen(port);
 
