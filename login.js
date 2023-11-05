@@ -5,6 +5,7 @@ const path = require('path');
 const app = express();
 
 const port = 3000;
+global.globalusername = "Sample";
 
 
 app.use(session({
@@ -15,6 +16,14 @@ app.use(session({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'static')));
+
+function makeDate(){
+	let date_ob = new Date();
+	let date = ("0" + date_ob.getDate()).slice(-2);
+	let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+	let year = date_ob.getFullYear();
+	return year + "-" + month + "-" + date;
+}
 
 
 const conn = mysql.createConnection({
@@ -50,15 +59,6 @@ app.get('/', (req, res) =>{
 	res.sendFile("main.html", {root:__dirname});
 
 });
-	
-	
-	
-	
-	
-	
-	
-	//res.status(200).json({info: 'hey'});
-
 
 app.get('/signup', (req, res) => {
 	res.sendFile("signup.html", {root:__dirname});
@@ -67,9 +67,6 @@ app.get('/signup', (req, res) => {
 app.get('/login', (req, res) => {
 	res.sendFile("login.html", {root:__dirname});	
 });
-
-
-
 
 app.get('/landing', (req, res) => {
 	if(req.session.loggedin){
@@ -106,7 +103,6 @@ app.post('/create', (req, res) => {
 	});
 });
 
-
 //login authorization
 app.post('/auth', (req, res) => {
 	let username = req.body.username;
@@ -139,30 +135,51 @@ app.post('/auth', (req, res) => {
 	}		
 });
 
+
+app.post('/additem', (req, res) => {
+	var userid;
+	let title = req.body.intitle;
+	let descip = req.body.indescription;
+	let cat = req.body.incategory;
+	let pric = req.body.inprice;
+	let currentdate = makeDate();
+	
+	let username = req.session.username;
+	conn.query('SELECT id FROM registration WHERE username=?', [username],
+	function(err, result, field){
+			if (err) throw err;
+			var data=JSON.parse(JSON.stringify(result));
+			userid = (data[0].id);
+
+			var sql = 'CALL CreateItem(?,?,?,?,?,?)'
+			conn.query(sql, [userid, title, descip, cat, pric, currentdate], 
+				function(err, result) {
+					if (err) throw err;
+					var data=JSON.parse(JSON.stringify(result));
+					if(typeof data[1] !== 'undefined')
+						res.send("Max number of inserts reached. </h1><a href='/landing'>Click to go back</a>");
+					else
+						res.send("Inserted sucessfully. </h1><a href='/landing'>Click to go back</a>");
+			});
+	});
+
+	
+});
+
 //creating a table
 app.post('/createtable', (req, res)=> {
-	
-	/*var sql = 'DROP TABLE IF EXISTS signupform.useritem;'
-	conn.query(sql, function(err, result){
+	let currentdate = makeDate();
+	var sql = 'CALL CreateTable(?)'
+	conn.query(sql, [currentdate], function(err, result){
 		if (err) throw err;
-		var sql2 = 'CREATE TABLE signupform.useritem ( user_id INT(255), FOREIGN KEY (user_id) REFERENCES registration(id), title VARCHAR(255) NOT NULL , description VARCHAR(255) NOT NULL , category VARCHAR(255) NOT NULL , price INT(255) NOT NULL , item_id INT(255) NOT NULL AUTO_INCREMENT , PRIMARY KEY (item_id)) ENGINE = InnoDB;'
-		conn.query(sql2, function(err, result){
-			if (err) throw err;
-			res.send("Success");
-			})
-	})*/
-	
-	var sql = 'CALL CreateTable()'
-	conn.query(sql, function(err, result){
-		if (err) throw err;
-		res.send("Table Created.");
+		res.send("Table Created. </h1><a href='/landing'>Click to go back</a>");
 	});
 });
 
 //Search and display items in a category
 app.post('/searchcategory', (req, res) => {
     const category = req.body.category;
-
+	
     conn.query("SELECT title, category FROM signupform.useritem WHERE category = ?", [category], (error, results) => {
         if (error) throw error;
 		console.log(results);
