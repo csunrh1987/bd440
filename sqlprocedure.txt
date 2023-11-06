@@ -1,16 +1,32 @@
+//SQL Procedure to create item table
 BEGIN
 DROP TABLE IF EXISTS signupform.useritem;
-CREATE TABLE signupform.useritem ( user_id INT(255), FOREIGN KEY (user_id) REFERENCES registration(id), title VARCHAR(255) NOT NULL , description VARCHAR(255) NOT NULL , category VARCHAR(255) NOT NULL , price INT(255) NOT NULL , item_id INT(255) NOT NULL AUTO_INCREMENT , PRIMARY KEY (item_id)) ENGINE = InnoDB;
+CREATE TABLE signupform.useritem ( user_id INT(255), FOREIGN KEY (user_id) REFERENCES registration(id), title VARCHAR(255) NOT NULL , description VARCHAR(255) NOT NULL , category VARCHAR(255) NOT NULL , price DECIMAL(4,2) NOT NULL , item_id INT(255) NOT NULL AUTO_INCREMENT , PRIMARY KEY (item_id), datein VARCHAR(255) NOT NULL) ENGINE = InnoDB;
 
-INSERT INTO signupform.useritem(user_id, title, description, category, price) 
-VALUES 
-('1', 'mytitle1', 'mydesc1', 'mycat1', '1.23'),
-('1', 'mytitle2', 'mydesc2', 'mycat2', '1.87'),
-('1', 'mytitle3', 'mydesc3', 'mycat3', '6.66');
+INSERT INTO signupform.useritem(user_id, title, description, category, price, datein) VALUES 
+('1', 'mytitle1', 'mydesc1', 'mycat1', '1.23', cDate),
+('15', 'mytitle2', 'mydesc2', 'mycat2', '1.87', cDate),
+('21', 'mytitle3', 'mydesc3', 'mycat3', '4.50', cDate),
+('22', 'mytitle4', 'mydesc4', 'mycat4', '6.66', cDate),
+('23', 'mytitle5', 'mydesc5', 'mycat5', '3.14', cDate);
 
 
 END
 
+
+
+//SQL Procedure to create item
+BEGIN
+DECLARE RESULT INT;
+IF
+((SELECT COUNT(*) FROM useritem WHERE user_id = p_id and datein = cDate) < 3)
+THEN
+INSERT INTO useritem (user_id, title, description, category, price, datein)
+VALUES (p_id, p_title, des, cat, p_price, cDate);
+ELSE
+SELECT "num";
+END IF;
+END
 
 
 //Sql Function to create review table in mysql
