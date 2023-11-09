@@ -34,3 +34,10 @@ Riley Espiritu
 
 Javier Torres
         1. Added script to check if email matches. Prompts user if email is not matching.
+        2. Implemented HTML drop down buttons for review table in landing.
+        3. Implemented HTML text box to leave review in landing. 
+        4. Implemented script to push selections to reviews table through .js file.
+        5. Implemented sql query with check to ensure a reviewer can only review 3 times per day and cannot review their own added item.
+        6. Implemented sql to add review table to database. 
+        7. Completed phase 2 part 3, reviews table.
+        8. Recorded demo for functionality of phase 2 part 3 reviews table.
