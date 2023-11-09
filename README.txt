@@ -18,6 +18,7 @@ Randy Herrera - Phase 2 Contributions
 	3. Created a front end button to interact with SQL database server
 	4. Wrote and tested server functionality to create a table upon clicking button.
 	5. Wrote and tested SQL procedures used in each step detailed above. 
+	6. Recorded video demo for part 1 and 4 of phase 2
 
 
 Riley Espiritu
