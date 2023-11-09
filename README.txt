@@ -16,6 +16,11 @@ Riley Espiritu
 	1. Used CSS to stylize each .html page.
 		a. Changed font, background color, alignment, forms, and submit button.
 	2. Reformatted code to properly fit CSS elements.
+	3. Completed part 2 of phase 2
+	4. Implemented SQL query in js file to get item category and item ID to send it to a JSON
+	5. Implemented HTML form to search for a specific item category
+	6. Implemented HTML script to put the results of the JSON into a table with an item and its category
+	7. Recorded video demo for part 2 of phase 2
 
 
 Javier Torres
