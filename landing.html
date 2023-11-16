@@ -176,42 +176,42 @@
 		</script>
 
 <!--Script to handle review calls when submit button is pressed-->
-			<script>
-			document.getElementById('submitReview').addEventListener('click', function () {
-			const item = document.getElementById('itemSelect').value;
-			const rating = document.getElementById('ratingSelect').value;
-			const reviewText = document.getElementById('reviewText').value;
+		<script>
+  document.getElementById('submitReview').addEventListener('click', function () {
+    const item_id = document.getElementById('itemSelect').value;
+    const rating = document.getElementById('ratingSelect').value;
+    const reviewText = document.getElementById('reviewText').value;
 
-			const data = { item, rating, reviewText };
+    const data = { item_id, rating, reviewText };
 
-			fetch('/submitreview', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(data),
-			})
-			.then(response => {
-				if (response.ok) {
-					console.log('Review submitted successfully');
-					alert('Review submitted successfully');
-					document.getElementById('reviewText').value = ''; // Clear the review text area
-				} else if (response.status === 403) {
-					console.log('You have already submitted three reviews today.');
-					alert('You have already submitted three reviews today.');
-				} else {
-					response.text().then(errorMessage => {
-						console.log('Error:', errorMessage);
-						alert('You have already submitted a review for this item: ');
-					});
-				}
-			})
-			.catch(error => {
-				console.error('Error:', error);
-				alert('An error occurred. Please try again.');
-			});
-		});
-				</Script>
+    fetch('/submitreview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log('Review submitted successfully');
+        alert('Review submitted successfully');
+        document.getElementById('reviewText').value = ''; // Clear the review text area
+      } else if (response.status === 403) {
+        console.log('You have already submitted three reviews today.');
+        alert('You have already submitted three reviews today.');
+      } else {
+        response.text().then(errorMessage => {
+          console.log('Error:', errorMessage);
+          alert('error: ' + errorMessage);
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    });
+  });
+		</script>
 	
 	</body>
 </html>
