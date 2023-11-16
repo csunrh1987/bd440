@@ -196,7 +196,7 @@ app.post('/searchcategory', (req, res) => {
 
 // Handle the review submission
 app.post('/submitreview', (req, res) => {
-	const { item, rating, reviewText } = req.body;
+	const { item_id, rating, reviewText } = req.body;
 	const username = req.session.username;
 	const today = makeDate();
 
@@ -214,21 +214,21 @@ app.post('/submitreview', (req, res) => {
 		}
 
 		// Check if the user is the creator of the item
-		conn.query('SELECT userid FROM useritem WHERE id = ?', [item], (err, result) => {
+		conn.query('SELECT user_id FROM useritem WHERE item_id = ?', [item_id], (err, result) => {
 			if (err) {
 				return res.status(500).send(err);
 			}
 
 			const itemData = JSON.parse(JSON.stringify(result));
-			const itemOwner = itemData[0].userid;
+			const itemOwner = itemData[0].user_id;
 
 			if (itemOwner === username) {
 				return res.status(403).send("You can't review your own item.");
 			}
 
 			// Insert the review into the database
-			const sql = 'INSERT INTO reviews (item, rating, review_text, reviewer, date) VALUES (?, ?, ?, ?, ?)';
-			conn.query(sql, [item, rating, reviewText, username, today], (err, result) => {
+			const sql = 'INSERT INTO reviews (item_id, rating, review_text, reviewer, date) VALUES (?, ?, ?, ?, ?)';
+			conn.query(sql, [item_id, rating, reviewText, username, today], (err, result) => {
 				if (err) {
 					return res.status(500).send(err);
 				}
@@ -243,12 +243,9 @@ app.post('/submitreview', (req, res) => {
 
 
 
-
-
-
 // Creating a review table
-app.post('/createtable', (req, res) => {
-	const sql = 'CREATE TABLE IF NOT EXISTS reviews (id INT AUTO_INCREMENT PRIMARY KEY, item VARCHAR(255), rating INT, review_text TEXT, reviewer VARCHAR(255), date DATE)';
+app.post('/createReviewTable', (req, res) => {
+	const sql = 'CREATE TABLE IF NOT EXISTS reviews (id INT AUTO_INCREMENT PRIMARY KEY, item_id INT, rating INT, review_text TEXT, reviewer VARCHAR(255), date DATE)';
 	conn.query(sql, (err, result) => {
 		if (err) {
 			console.error('Error occurred while creating table:', err);
