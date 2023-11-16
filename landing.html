@@ -142,28 +142,27 @@
 		<hr>java<hr>
 		<div id="add-review">
 			<h2>Add a Review:</h2>
-				<form id="review-form">
-					<label for="itemSelect">Select an item:</label>
-					<select id="itemSelect" name="itemSelect">
-						<option value="Test Item">Test Item</option>
-						<option value="Test Item 2">Test Item 2</option>
-						<option value="Test Item 3">Test Item 3</option>
-						<option value="Test Item 4">Test Item 4</option>
-						<!-- We can add more items here -->
-					</select>
-					<br>
-					<label for="ratingSelect">Select a rating:</label>
-					<select id="ratingSelect" name="ratingSelect">
-						<option value="excellent">Excellent</option>
-						<option value="good">Good</option>
-						<option value="fair">Fair</option>
-						<option value="poor">Poor</option>
-					</select>
-						<br>
-					<label for="reviewText">Review:</label>
-					<textarea id="reviewText" name="reviewText" rows="4" cols="50"></textarea>
-					<br>
-					<button type="button" id="submitReview">Submit Review</button>
+			<form id="review-form">
+				<label for="itemSelect">Select an item:</label>
+				<select id="itemSelect" name="item_id">
+					
+					<option value="1">Test Item 1</option> <!-- Replace "1" with the actual item ID -->
+					<option value="2">Test Item 2</option> <!-- Replace "2" with the actual item ID -->
+					<!-- Add more items with their respective IDs -->
+				</select>
+				<br>
+				<label for="ratingSelect">Select a rating:</label>
+				<select id="ratingSelect" name="rating">
+					<option value="excellent">Excellent</option>
+					<option value="good">Good</option>
+					<option value="fair">Fair</option>
+					<option value="poor">Poor</option>
+				</select>
+				<br>
+				<label for="reviewText">Review:</label>
+				<textarea id="reviewText" name="reviewText" rows="4" cols="50"></textarea>
+				<br>
+				<button type="button" id="submitReview">Submit Review</button>
 			</form>
 		</div>
 		<hr>
