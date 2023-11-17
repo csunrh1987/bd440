@@ -1,0 +1,21 @@
+1  (tested and works)
+SELECT category, MAX(price)
+FROM useritems
+GROUP BY category 
+
+3 (tested and works)
+SELECT U.title, U.price
+FROM useritem U , review R, registration G
+WHERE U.item_id = R.id and R.review_text = 'Excellent'' AND G.username = 'given_username';
+
+We'll need a procedure to make this cleaner 
+
+7 (tested and works)
+SELECT DISTINCT G.username, R.review_text, G.id
+FROM registration G, reviews R
+WHERE G.id = R.reviewer_id AND R.reviewer_id NOT IN (SELECT reviewer_id FROM reviews WHERE review_text = 'Poor') 
+
+8 (tested and works)
+SELECT G.username, R.review_text. G.id
+FROM registration G, reviews R
+WHERE G.id = R.revewier_id AND G.id NOT IN (SELECT R.reviewer_id FROM reviews R WHERE R.review_text NOT IN ('Poor'));
