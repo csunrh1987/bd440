@@ -69,18 +69,22 @@
 		<h1>Welcome</h1>
 		<div class="form">
 			<br>Add an item<br>
-			<form id="add-item">			
-				<label for="inputTitle">Title: </label>
-				<input type="text" id="intitle">
+			<form action="/additem" method="POST">			
+				<label for="inputTitle">Title</label>
+				<input type="text" name="intitle">
 				<br>
+				
 				<label for="inputDesc">Description: </label>
-				<input type="text" id="indescription">
+				<input type="text" name="indescription">
 				<br>
+				
 				<label for="inputCategory">Category: </label>
-				<input type="text" id="incategory">
+				<input type="text" name="incategory">
 				<br>
+				
 				<label for="inputPrice">Price: </label>
-				<input type="text" id="inprice">
+				<input type="text" name="inprice">
+				<button type="submit">Add Item</button>
 			</form>
 		</div>	
 
@@ -135,28 +139,30 @@
 			});
 		</script>
 
-		<hr>java code<hr>
+		<hr>java<hr>
 		<div id="add-review">
 			<h2>Add a Review:</h2>
-				<form id="review-form">
-					<label for="itemSelect">Select an item:</label>
-					<select id="itemSelect" name="itemSelect">
-						<option value="Test Item">Test Item</option>
-						<!-- We can add more items here -->
-					</select>
-					<br>
-					<label for="ratingSelect">Select a rating:</label>
-					<select id="ratingSelect" name="ratingSelect">
-						<option value="excellent">Excellent</option>
-						<option value="good">Good</option>
-						<option value="fair">Fair</option>
-						<option value="poor">Poor</option>
-					</select>
-						<br>
-					<label for="reviewText">Review:</label>
-					<textarea id="reviewText" name="reviewText" rows="4" cols="50"></textarea>
-					<br>
-					<button type="button" id="submitReview">Submit Review</button>
+			<form id="review-form">
+				<label for="itemSelect">Select an item:</label>
+				<select id="itemSelect" name="item_id">
+					
+					<option value="1">Test Item 1</option> <!-- Replace "1" with the actual item ID -->
+					<option value="2">Test Item 2</option> <!-- Replace "2" with the actual item ID -->
+					<!-- Add more items with their respective IDs -->
+				</select>
+				<br>
+				<label for="ratingSelect">Select a rating:</label>
+				<select id="ratingSelect" name="rating">
+					<option value="excellent">Excellent</option>
+					<option value="good">Good</option>
+					<option value="fair">Fair</option>
+					<option value="poor">Poor</option>
+				</select>
+				<br>
+				<label for="reviewText">Review:</label>
+				<textarea id="reviewText" name="reviewText" rows="4" cols="50"></textarea>
+				<br>
+				<button type="button" id="submitReview">Submit Review</button>
 			</form>
 		</div>
 		<hr>
@@ -167,6 +173,44 @@
 		<a href="\">Logout</a>
 		<script>
 			
+		</script>
+
+<!--Script to handle review calls when submit button is pressed-->
+		<script>
+  document.getElementById('submitReview').addEventListener('click', function () {
+    const item_id = document.getElementById('itemSelect').value;
+    const rating = document.getElementById('ratingSelect').value;
+    const reviewText = document.getElementById('reviewText').value;
+
+    const data = { item_id, rating, reviewText };
+
+    fetch('/submitreview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log('Review submitted successfully');
+        alert('Review submitted successfully');
+        document.getElementById('reviewText').value = ''; // Clear the review text area
+      } else if (response.status === 403) {
+        console.log('You have already submitted three reviews today.');
+        alert('You have already submitted three reviews today.');
+      } else {
+        response.text().then(errorMessage => {
+          console.log('Error:', errorMessage);
+          alert('error: ' + errorMessage);
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    });
+  });
 		</script>
 	
 	</body>
