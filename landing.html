@@ -87,6 +87,53 @@
 				<button type="submit">Add Item</button>
 			</form>
 		</div>	
+		<hr>
+		<div class="form">
+			<br>Query 1</br>
+			<form>
+				<table>
+					<tr>
+						<td>Category</td>
+						<td>Price</td>
+					</tr>
+					<tbody id="maxresult">
+					</tbody>					
+				</table>	
+				<button id="maxbutton">MaxBtn</button>
+			</form>
+			<script>
+				/*front end GET request to sql server*/
+				
+				const baseUrl = 'http://localhost:3000/maxcat';
+				const maxBtn = document.getElementById('maxbutton');
+				//const input = document.getElementById('input');
+				const maxresult = document.getElementById('maxresult');
+				
+				maxBtn.addEventListener('click', getMax);
+				
+				async function getMax(e) {
+					e.preventDefault()
+					const res = await fetch(baseUrl, 
+					{
+						method: 'GET'
+
+					})
+					const data0 = await res.json()
+					maxresult.innerHTML = "";
+					//input.innerHTML = data[1].max
+					
+					data0.forEach(e =>{
+						const row0 = document.createElement("tr");
+						row0.innerHTML = `<td>${e.category}</td><td>${e.max}</td>`
+						maxresult.appendChild(row0);
+						
+					
+					})
+				}
+	
+			</script>
+		
+		
 
 		<hr>riley<hr>
 		<div class="form">	
