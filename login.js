@@ -256,6 +256,25 @@ app.post('/createReviewTable', (req, res) => {
 	});
 });
 
+//query 1 phase 3
+app.get('/maxcat', (req, res) => {
+	const sql = 'SELECT category, MAX(price) as max FROM useritem GROUP BY category';
+	conn.query(sql, (err,result) => {
+		if (err) throw err;
+		const items = result.map(result => ({
+			category: result.category,
+			max: result.max,
+		}));
+		console.log(items);
+		res.send(items);
+		
+	});
+	
+
+
+
+});
+
 
 app.listen(port);
 
