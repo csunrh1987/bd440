@@ -106,6 +106,21 @@
 		
 		<hr>
 		<div class="form">
+			<br>Query 7</br>
+			<form>
+				<table>
+					<tr>
+						<td>Username</td>
+					</tr>
+					<tbody id="nopoorresult">
+					</tbody>
+				</table>
+				<button id="nopoorbutton">PoorBtn</button>
+			</form>
+		</div>
+		
+		<hr>
+		<div class="form">
 			<br>Query 3</br>
 			<form id="excelform" action="/excellentitems" method="POST">
 				<label for = "exceluser">Enter a username: </label>
@@ -338,6 +353,29 @@
 				excelResult.appendChild(row3);	
 			})
 		}
+		/*code for Query 7*/
+			const baseUrl7 = 'http://localhost:3000/nopoor';
+			const poorBtn = document.getElementById('nopoorbutton');
+			const nopoorResult = document.getElementById('nopoorresult');
+			
+			poorBtn.addEventListener('click', excPoor);
+			
+			async function excPoor(e){
+				e.preventDefault();
+				const res = await fetch(baseUrl7, 
+				{
+					method: 'GET'
+				})
+				const data7 = await res.json()
+				console.log(data7);
+				nopoorResult.innerHTML = "";
+				
+				data7.forEach(e =>{
+					const row7 = document.createElement("tr");
+					row7.innerHTML = `<td>${e.username}</td>`
+					nopoorResult.appendChild(row7)
+					})
+			}
 		
 		/*Phase 2 search*/
 		const searchForm = document.getElementById("search-form");
