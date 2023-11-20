@@ -272,6 +272,33 @@ app.get('/maxcat', (req, res) => {
 
 
 });
+
+//Query 2 phase 3: 2 items on same day but in a different category
+app.post('/searchUsersByCategories', (req, res) => {
+	console.log('Received search request:', req.body);
+    const category1 = req.body.category1;
+    const category2 = req.body.category2;
+
+    const query = `
+		SELECT u.username
+		FROM registration u
+		JOIN useritem i1 ON u.id = i1.user_id
+		JOIN useritem i2 ON u.id = i2.user_id
+		WHERE i1.category = ? AND i2.category = ? AND i1.datein = i2.datein AND i1.item_id <> i2.item_id
+		`;
+
+    conn.query(query, [category1, category2], (error, results) => {
+        if (error) {
+			console.log('Recieved search request:', req.body);
+            console.error('Error in searchUsersByCategories:', error);
+            return res.status(500).send('An error occurred while searching for users.');
+        }
+        console.log('Users:', results.map(result => result.username));
+        const users = results.map(result => result.username);
+        res.json({ users });
+    });
+});
+
 //query 3 phase3
 app.post('/excellentitems', (req,res) => {
 	console.log(req.body.user);
