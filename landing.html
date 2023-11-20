@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-        <style>
+		<style>
             body{
 				background: #f2f2f2;
 				font-family: Consolas, monaco, monospace;
@@ -87,6 +87,7 @@
 				<button type="submit">Add Item</button>
 			</form>
 		</div>	
+		
 		<hr>
 		<div class="form">
 			<br>Query 1</br>
@@ -101,39 +102,29 @@
 				</table>	
 				<button id="maxbutton">MaxBtn</button>
 			</form>
-			<script>
-				/*front end GET request to sql server*/
-				
-				const baseUrl = 'http://localhost:3000/maxcat';
-				const maxBtn = document.getElementById('maxbutton');
-				//const input = document.getElementById('input');
-				const maxresult = document.getElementById('maxresult');
-				
-				maxBtn.addEventListener('click', getMax);
-				
-				async function getMax(e) {
-					e.preventDefault()
-					const res = await fetch(baseUrl, 
-					{
-						method: 'GET'
-
-					})
-					const data0 = await res.json()
-					maxresult.innerHTML = "";
-					//input.innerHTML = data[1].max
-					
-					data0.forEach(e =>{
-						const row0 = document.createElement("tr");
-						row0.innerHTML = `<td>${e.category}</td><td>${e.max}</td>`
-						maxresult.appendChild(row0);
-						
-					
-					})
-				}
-	
-			</script>
+		</div>
 		
-		
+		<hr>
+		<div class="form">
+			<br>Query 3</br>
+			<form id="excelform" action="/excellentitems" method="POST">
+				<label for = "exceluser">Enter a username: </label>
+				<input type="text" id="excelinput" name="exceluser" placeholder="Enter Username">
+				<button type="submit">Find Excellent</button>
+			</form>
+			
+			<table id="exceltable">
+				<tr>
+					<td>Username</td>
+					<td>Title</td>
+				</tr>
+				<tbody id="excelresult">
+				
+				</tbody>					
+			</table>	
+				
+			</form>
+		</div>
 
 		<hr>riley<hr>
 		<div class="form">	
@@ -155,36 +146,7 @@
 			</tbody>
 		</table>
 		</div>
-		<script>
-			const searchForm = document.getElementById("search-form");
-			const resultsTable = document.getElementById("results-table");
-			const resultsBody = document.getElementById("results-body");
-		
-			searchForm.addEventListener("submit", async (e) => {
-				e.preventDefault();
-				const category = document.getElementById("input").value;
-		
-				// Send a POST request to the server to fetch results for the given category
-				const response = await fetch("/searchcategory", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ category }),
-				});
-		
-				if (response.ok) {
-					const data = await response.json();
-					resultsBody.innerHTML = ""; // Clear previous results
-		
-					data.forEach(item => {
-						const row = document.createElement("tr");
-						row.innerHTML = `<td>${item.title}</td><td>${item.category}</td>`;
-						resultsBody.appendChild(row);
-					});
-				}
-			});
-		</script>
+
 
 		<hr>java<hr>
 		<div id="add-review">
@@ -216,11 +178,9 @@
 		<h2>Create table button</h2>
 			<form action="/createtable" method="post">
 				<button type="submit" class="mybutton">Create table</button>
+			</form>
 		<hr>
 		<a href="\">Logout</a>
-		<script>
-			
-		</script>
 
 <!--Script to handle review calls when submit button is pressed-->
 		<script>
@@ -258,6 +218,100 @@
       alert('An error occurred. Please try again.');
     });
   });
+		
+
+		/*code for Query 1*/
+		const baseUrl = 'http://localhost:3000/maxcat';
+		const maxBtn = document.getElementById('maxbutton');
+		//const input = document.getElementById('input');
+		const maxresult = document.getElementById('maxresult');
+
+		maxBtn.addEventListener('click', getMax);
+
+		async function getMax(e) {
+			e.preventDefault()
+			const res = await fetch(baseUrl, 
+			{
+				method: 'GET'
+
+			})
+			const data0 = await res.json()
+			maxresult.innerHTML = "";
+			//input.innerHTML = data[1].max
+			
+			data0.forEach(e =>{
+				const row0 = document.createElement("tr");
+				row0.innerHTML = `<td>${e.category}</td><td>${e.max}</td>`
+				maxresult.appendChild(row0);	
+			})
+		}
+		/*code for Query 3*/
+					const excelForm = document.getElementById("excelform");
+			const excelTable = document.getElementById("exceltable");
+			const excelResult = document.getElementById("excelresult");
+			
+			
+			excelForm.addEventListener("submit", getExcel);
+			
+			async function getExcel(e) {
+				e.preventDefault();
+				const user = document.getElementById("excelinput").value;
+				
+				const ress = await fetch("/excellentitems", {
+					method: "POST",
+					headers: { "Content-Type" : "application/json"},
+					body: JSON.stringify({user})
+					});
+				console.log(user);
+				const response = await fetch("/excellentitems", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ user }),
+				});
+				const test = await response.json();
+				excelResult.innerHTML = "";
+				console.log(test);
+				
+				test.forEach(e =>{
+					const row3 = document.createElement("tr");
+					row3.innerHTML = `<td>${e.username}</td><td>${e.title}</td>`
+					excelResult.appendChild(row3);	
+				})
+			
+				
+			}
+		
+		
+		const searchForm = document.getElementById("search-form");
+		const resultsTable = document.getElementById("results-table");
+		const resultsBody = document.getElementById("results-body");
+
+		searchForm.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			const category = document.getElementById("input").value;
+
+			// Send a POST request to the server to fetch results for the given category
+			const response = await fetch("/searchcategory", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ category }),
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				resultsBody.innerHTML = ""; // Clear previous results
+
+				data.forEach(item => {
+					const row = document.createElement("tr");
+					row.innerHTML = `<td>${item.title}</td><td>${item.category}</td>`;
+					resultsBody.appendChild(row);
+				});
+			}
+		});
 		</script>
 	
 	</body>
