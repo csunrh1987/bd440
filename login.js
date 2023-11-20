@@ -187,12 +187,10 @@ app.post('/searchcategory', (req, res) => {
             title: result.title,
             category: result.category,
         }));
-
+		console.log(category);
         res.json(items); // Send the results as JSON
     });
 });
-
-
 
 // Handle the review submission
 app.post('/submitreview', (req, res) => {
@@ -274,6 +272,25 @@ app.get('/maxcat', (req, res) => {
 
 
 });
+//query 3 phase3
+app.post('/excellentitems', (req,res) => {
+	console.log(req.body.user);
+	const myuser = req.body.user;
+	
+	const sql = 
+		'SELECT DISTINCT r.username, r1.item_id, u.title FROM reviews r1 JOIN useritem u ON r1.item_id = u.item_id JOIN registration r ON u.user_id = r.id WHERE r.username = ? AND (r1.review_text = ? OR r1.review_text = ?) AND NOT EXISTS (SELECT 1 FROM reviews r2 WHERE r1.item_id = r2.item_id AND r2.review_text NOT IN(?,?))'
+	
+	conn.query(sql, [myuser, "Excellent", "Good", "Excellent", "Good"], function (err, result) {
+		if (err) throw err;
+		const items = result.map(result => ({
+			username: result.username,
+			title: result.title,
+		}));
+		console.log("test value:" + myuser);
+		res.send(items);
+	});
+});
+
 
 
 app.listen(port);
