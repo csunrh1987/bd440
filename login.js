@@ -318,6 +318,21 @@ app.post('/excellentitems', (req,res) => {
 	});
 });
 
+//query 7 phase3
+app.get('/nopoor', (req, res) =>{
+	const sql = 'SELECT DISTINCT G.username FROM registration G, reviews R WHERE G.id = R.reviewer_id AND R.reviewer_id NOT IN (SELECT reviewer_id FROM reviews WHERE review_text = ?)'
+	conn.query(sql, ["Poor"], function (err, result) {
+		if (err) throw err;
+		const items = result.map(result => ({
+			username: result.username,
+		}));
+		console.log(items);
+		res.send(items);
+		})
+	
+});
+
+
 
 
 app.listen(port);
