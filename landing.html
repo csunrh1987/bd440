@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-        <style>
+		<style>
             body{
 				background: #f2f2f2;
 				font-family: Consolas, monaco, monospace;
@@ -87,6 +87,44 @@
 				<button type="submit">Add Item</button>
 			</form>
 		</div>	
+		
+		<hr>
+		<div class="form">
+			<br>Query 1</br>
+			<form>
+				<table>
+					<tr>
+						<td>Category</td>
+						<td>Price</td>
+					</tr>
+					<tbody id="maxresult">
+					</tbody>					
+				</table>	
+				<button id="maxbutton">MaxBtn</button>
+			</form>
+		</div>
+		
+		<hr>
+		<div class="form">
+			<br>Query 3</br>
+			<form id="excelform" action="/excellentitems" method="POST">
+				<label for = "exceluser">Enter a username: </label>
+				<input type="text" id="excelinput" name="exceluser" placeholder="Enter Username">
+				<button type="submit">Find Excellent</button>
+			</form>
+			
+			<table id="exceltable">
+				<tr>
+					<td>Username</td>
+					<td>Title</td>
+				</tr>
+				<tbody id="excelresult">
+				
+				</tbody>					
+			</table>	
+				
+			</form>
+		</div>
 
 		<hr>riley<hr>
 		<div class="form">	
@@ -108,36 +146,30 @@
 			</tbody>
 		</table>
 		</div>
-		<script>
-			const searchForm = document.getElementById("search-form");
-			const resultsTable = document.getElementById("results-table");
-			const resultsBody = document.getElementById("results-body");
+		<div class="form">
+			<br>Search Users by Categories<br>
+			<form id="search-categories-form" action="/searchUsersByCategories" method="POST">
+				<label for="category1">Category 1:</label>
+				<input type="text" id="category1" name="category1" placeholder="Category 1">
+				<br>
 		
-			searchForm.addEventListener("submit", async (e) => {
-				e.preventDefault();
-				const category = document.getElementById("input").value;
+				<label for="category2">Category 2:</label>
+				<input type="text" id="category2" name="category2" placeholder="Category 2">
+				<br>
 		
-				// Send a POST request to the server to fetch results for the given category
-				const response = await fetch("/searchcategory", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ category }),
-				});
-		
-				if (response.ok) {
-					const data = await response.json();
-					resultsBody.innerHTML = ""; // Clear previous results
-		
-					data.forEach(item => {
-						const row = document.createElement("tr");
-						row.innerHTML = `<td>${item.title}</td><td>${item.category}</td>`;
-						resultsBody.appendChild(row);
-					});
-				}
-			});
-		</script>
+				<button type="submit" id="searchCategories">Search Users</button>
+			</form>
+			<h2>Users who posted at least two items in a day:</h2>
+			<table id="users-table">
+				<thead>
+					<tr>
+						<th>Username</th>
+					</tr>
+				</thead>
+				<tbody id="users-result">
+				</tbody>
+			</table>
+		</div>
 
 		<hr>java<hr>
 		<div id="add-review">
@@ -169,48 +201,173 @@
 		<h2>Create table button</h2>
 			<form action="/createtable" method="post">
 				<button type="submit" class="mybutton">Create table</button>
+			</form>
 		<hr>
 		<a href="\">Logout</a>
-		<script>
-			
-		</script>
 
 <!--Script to handle review calls when submit button is pressed-->
 		<script>
-  document.getElementById('submitReview').addEventListener('click', function () {
-    const item_id = document.getElementById('itemSelect').value;
-    const rating = document.getElementById('ratingSelect').value;
-    const reviewText = document.getElementById('reviewText').value;
+		  document.getElementById('submitReview').addEventListener('click', function () {
+		    const item_id = document.getElementById('itemSelect').value;
+		    const rating = document.getElementById('ratingSelect').value;
+		    const reviewText = document.getElementById('reviewText').value;
+		
+		    const data = { item_id, rating, reviewText };
+		
+		    fetch('/submitreview', {
+		      method: 'POST',
+		      headers: {
+		        'Content-Type': 'application/json',
+		      },
+		      body: JSON.stringify(data),
+		    })
+		    .then(response => {
+		      if (response.ok) {
+		        console.log('Review submitted successfully');
+		        alert('Review submitted successfully');
+		        document.getElementById('reviewText').value = ''; // Clear the review text area
+		      } else if (response.status === 403) {
+		        console.log('You have already submitted three reviews today.');
+		        alert('You have already submitted three reviews today.');
+		      } else {
+		        response.text().then(errorMessage => {
+		          console.log('Error:', errorMessage);
+		          alert('error: ' + errorMessage);
+		        });
+		      }
+		    })
+		    .catch(error => {
+		      console.error('Error:', error);
+		      alert('An error occurred. Please try again.');
+		    });
+		  });
+		
 
-    const data = { item_id, rating, reviewText };
+		/*code for Query 1*/
+		const baseUrl = 'http://localhost:3000/maxcat';
+		const maxBtn = document.getElementById('maxbutton');
+		//const input = document.getElementById('input');
+		const maxresult = document.getElementById('maxresult');
 
-    fetch('/submitreview', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-    .then(response => {
-      if (response.ok) {
-        console.log('Review submitted successfully');
-        alert('Review submitted successfully');
-        document.getElementById('reviewText').value = ''; // Clear the review text area
-      } else if (response.status === 403) {
-        console.log('You have already submitted three reviews today.');
-        alert('You have already submitted three reviews today.');
-      } else {
-        response.text().then(errorMessage => {
-          console.log('Error:', errorMessage);
-          alert('error: ' + errorMessage);
-        });
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('An error occurred. Please try again.');
-    });
-  });
+		maxBtn.addEventListener('click', getMax);
+
+		async function getMax(e) {
+			e.preventDefault()
+			const res = await fetch(baseUrl, 
+			{
+				method: 'GET'
+
+			})
+			const data0 = await res.json()
+			maxresult.innerHTML = "";
+			//input.innerHTML = data[1].max
+			
+			data0.forEach(e =>{
+				const row0 = document.createElement("tr");
+				row0.innerHTML = `<td>${e.category}</td><td>${e.max}</td>`
+				maxresult.appendChild(row0);	
+			})
+		}
+			
+		/*Code for query 2*/
+		const searchCategoriesForm = document.getElementById("search-categories-form");
+		const usersTable = document.getElementById("users-table");
+		const usersResultBody = document.getElementById("users-result");
+	
+		searchCategoriesForm.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			const category1 = document.getElementById("category1").value;
+			const category2 = document.getElementById("category2").value;
+	
+			const response = await fetch("/searchUsersByCategories", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ category1, category2 }),
+			});
+	
+			if (response.ok) {
+				const data = await response.json();
+	
+				usersResultBody.innerHTML = ""; // Clear previous results
+	
+				data.users.forEach(username => {
+					const row = document.createElement("tr");
+					row.innerHTML = `<td>${username}</td>`;
+					usersResultBody.appendChild(row);
+				});
+			} else {
+				console.error("Error in searchUsersByCategories:", response.statusText);
+				usersResultBody.innerHTML = "<p>An error occurred while searching for users.</p>";
+			}
+		});
+			
+		/*code for Query 3*/
+		const excelForm = document.getElementById("excelform");
+		const excelTable = document.getElementById("exceltable");
+		const excelResult = document.getElementById("excelresult");
+		
+		
+		excelForm.addEventListener("submit", getExcel);
+		
+		async function getExcel(e) {
+			e.preventDefault();
+			const user = document.getElementById("excelinput").value;
+			
+			const ress = await fetch("/excellentitems", {
+				method: "POST",
+				headers: { "Content-Type" : "application/json"},
+				body: JSON.stringify({user})
+				});
+			console.log(user);
+			const response = await fetch("/excellentitems", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ user }),
+			});
+			const test = await response.json();
+			excelResult.innerHTML = "";
+			console.log(test);
+			
+			test.forEach(e =>{
+				const row3 = document.createElement("tr");
+				row3.innerHTML = `<td>${e.username}</td><td>${e.title}</td>`
+				excelResult.appendChild(row3);	
+			})
+		}
+		
+		/*Phase 2 search*/
+		const searchForm = document.getElementById("search-form");
+		const resultsTable = document.getElementById("results-table");
+		const resultsBody = document.getElementById("results-body");
+
+		searchForm.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			const category = document.getElementById("input").value;
+
+			// Send a POST request to the server to fetch results for the given category
+			const response = await fetch("/searchcategory", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ category }),
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				resultsBody.innerHTML = ""; // Clear previous results
+
+				data.forEach(item => {
+					const row = document.createElement("tr");
+					row.innerHTML = `<td>${item.title}</td><td>${item.category}</td>`;
+					resultsBody.appendChild(row);
+				});
+			}
+		});
 		</script>
 	
 	</body>
