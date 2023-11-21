@@ -32,8 +32,6 @@ const conn = mysql.createConnection({
 	password: "root",
 	port:8889,
 	database: "signupform"
-	
-	
 });
 
 conn.connect( (err) => {
@@ -75,7 +73,6 @@ app.get('/landing', (req, res) => {
 	else{
 		res.send("Landing wrong");
 	}
-	
 });
 
 //signup authorization
@@ -126,7 +123,6 @@ app.post('/auth', (req, res) => {
 				res.send("wrong.");
 			}
 			res.end();
-
 		});
 	}
 	else{
@@ -162,8 +158,6 @@ app.post('/additem', (req, res) => {
 						res.send("Inserted sucessfully. </h1><a href='/landing'>Click to go back</a>");
 			});
 	});
-
-	
 });
 
 //creating a table
@@ -237,10 +231,6 @@ app.post('/submitreview', (req, res) => {
 	});
 });
 
-
-
-
-
 // Creating a review table
 app.post('/createReviewTable', (req, res) => {
 	const sql = 'CREATE TABLE IF NOT EXISTS reviews (id INT AUTO_INCREMENT PRIMARY KEY, item_id INT, rating INT, review_text TEXT, reviewer VARCHAR(255), date DATE)';
@@ -264,13 +254,8 @@ app.get('/maxcat', (req, res) => {
 			max: result.max,
 		}));
 		console.log(items);
-		res.send(items);
-		
+		res.send(items);		
 	});
-	
-
-
-
 });
 
 //Query 2 phase 3: 2 items on same day but in a different category
@@ -332,8 +317,19 @@ app.get('/nopoor', (req, res) =>{
 	
 });
 
-
-
+//query 8 phase3
+app.get('/allpoor', (req, res) =>{
+		const sql = 'SELECT DISTINCT G.username, R.review_text, G.id FROM registration G, reviews R WHERE G.id = R.reviewer_id AND G.id NOT IN (SELECT R.reviewer_id FROM reviews R WHERE R.review_text NOT IN (?))'
+		conn.query(sql, ["Poor"], function (err, result) {
+		if (err) throw err;
+		const items = result.map(result => ({
+			username: result.username,
+		}));	
+		console.log(items);
+		res.send(items);
+		})
+			
+});
 
 app.listen(port);
 
