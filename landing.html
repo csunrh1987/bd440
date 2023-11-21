@@ -103,22 +103,7 @@
 				<button id="maxbutton">MaxBtn</button>
 			</form>
 		</div>
-		
-		<hr>
-		<div class="form">
-			<br>Query 7</br>
-			<form>
-				<table>
-					<tr>
-						<td>Username</td>
-					</tr>
-					<tbody id="nopoorresult">
-					</tbody>
-				</table>
-				<button id="nopoorbutton">PoorBtn</button>
-			</form>
-		</div>
-		
+				
 		<hr>
 		<div class="form">
 			<br>Query 3</br>
@@ -138,6 +123,36 @@
 				</tbody>					
 			</table>	
 				
+			</form>
+		</div>
+		
+		<hr>
+		<div class="form">
+			<br>Query 7</br>
+			<form>
+				<table>
+					<tr>
+						<td>Username</td>
+					</tr>
+					<tbody id="nopoorresult">
+					</tbody>
+				</table>
+				<button id="nopoorbutton">NoPoorBtn</button>
+			</form>
+		</div>
+		
+		<hr>
+		<div class="form">
+			<br>Query 8</br>
+			<form>
+				<table>
+					<tr>
+						<td>Username</td>
+					</tr>
+					<tbody id="allpoorresult">
+					</tbody>
+				</table>
+				<button id="allpoorbutton">AllPoorBtn</button>
 			</form>
 		</div>
 
@@ -220,18 +235,18 @@
 		<hr>
 		<a href="\">Logout</a>
 
-<!--Script to handle review calls when submit button is pressed-->
+		<!--Script to handle review calls when submit button is pressed-->
 		<script>
-		  document.getElementById('submitReview').addEventListener('click', function () {
-		    const item_id = document.getElementById('itemSelect').value;
+			document.getElementById('submitReview').addEventListener('click', function () {
+			const item_id = document.getElementById('itemSelect').value;
 		    const rating = document.getElementById('ratingSelect').value;
 		    const reviewText = document.getElementById('reviewText').value;
 		
 		    const data = { item_id, rating, reviewText };
 		
 		    fetch('/submitreview', {
-		      method: 'POST',
-		      headers: {
+				method: 'POST',
+				headers: {
 		        'Content-Type': 'application/json',
 		      },
 		      body: JSON.stringify(data),
@@ -258,102 +273,102 @@
 		  });
 		
 
-		/*code for Query 1*/
-		const baseUrl = 'http://localhost:3000/maxcat';
-		const maxBtn = document.getElementById('maxbutton');
-		//const input = document.getElementById('input');
-		const maxresult = document.getElementById('maxresult');
+			/*code for Query 1*/
+			const baseUrl = 'http://localhost:3000/maxcat';
+			const maxBtn = document.getElementById('maxbutton');
+			//const input = document.getElementById('input');
+			const maxresult = document.getElementById('maxresult');
 
-		maxBtn.addEventListener('click', getMax);
+			maxBtn.addEventListener('click', getMax);
 
-		async function getMax(e) {
-			e.preventDefault()
-			const res = await fetch(baseUrl, 
-			{
-				method: 'GET'
+			async function getMax(e) {
+				e.preventDefault()
+				const res = await fetch(baseUrl, 
+				{
+					method: 'GET'
 
-			})
-			const data0 = await res.json()
-			maxresult.innerHTML = "";
-			//input.innerHTML = data[1].max
-			
-			data0.forEach(e =>{
-				const row0 = document.createElement("tr");
-				row0.innerHTML = `<td>${e.category}</td><td>${e.max}</td>`
-				maxresult.appendChild(row0);	
-			})
-		}
-			
-		/*Code for query 2*/
-		const searchCategoriesForm = document.getElementById("search-categories-form");
-		const usersTable = document.getElementById("users-table");
-		const usersResultBody = document.getElementById("users-result");
-	
-		searchCategoriesForm.addEventListener("submit", async (e) => {
-			e.preventDefault();
-			const category1 = document.getElementById("category1").value;
-			const category2 = document.getElementById("category2").value;
-	
-			const response = await fetch("/searchUsersByCategories", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ category1, category2 }),
-			});
-	
-			if (response.ok) {
-				const data = await response.json();
-	
-				usersResultBody.innerHTML = ""; // Clear previous results
-	
-				data.users.forEach(username => {
-					const row = document.createElement("tr");
-					row.innerHTML = `<td>${username}</td>`;
-					usersResultBody.appendChild(row);
-				});
-			} else {
-				console.error("Error in searchUsersByCategories:", response.statusText);
-				usersResultBody.innerHTML = "<p>An error occurred while searching for users.</p>";
+				})
+				const data0 = await res.json()
+				maxresult.innerHTML = "";
+				//input.innerHTML = data[1].max
+				
+				data0.forEach(e =>{
+					const row0 = document.createElement("tr");
+					row0.innerHTML = `<td>${e.category}</td><td>${e.max}</td>`
+					maxresult.appendChild(row0);	
+				})
 			}
-		});
-			
-		/*code for Query 3*/
-		const excelForm = document.getElementById("excelform");
-		const excelTable = document.getElementById("exceltable");
-		const excelResult = document.getElementById("excelresult");
+				
+			/*Code for query 2*/
+			const searchCategoriesForm = document.getElementById("search-categories-form");
+			const usersTable = document.getElementById("users-table");
+			const usersResultBody = document.getElementById("users-result");
 		
+			searchCategoriesForm.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const category1 = document.getElementById("category1").value;
+				const category2 = document.getElementById("category2").value;
 		
-		excelForm.addEventListener("submit", getExcel);
-		
-		async function getExcel(e) {
-			e.preventDefault();
-			const user = document.getElementById("excelinput").value;
-			
-			const ress = await fetch("/excellentitems", {
-				method: "POST",
-				headers: { "Content-Type" : "application/json"},
-				body: JSON.stringify({user})
+				const response = await fetch("/searchUsersByCategories", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ category1, category2 }),
 				});
-			console.log(user);
-			const response = await fetch("/excellentitems", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ user }),
+		
+				if (response.ok) {
+					const data = await response.json();
+		
+					usersResultBody.innerHTML = ""; // Clear previous results
+		
+					data.users.forEach(username => {
+						const row = document.createElement("tr");
+						row.innerHTML = `<td>${username}</td>`;
+						usersResultBody.appendChild(row);
+					});
+				} else {
+					console.error("Error in searchUsersByCategories:", response.statusText);
+					usersResultBody.innerHTML = "<p>An error occurred while searching for users.</p>";
+				}
 			});
-			const test = await response.json();
-			excelResult.innerHTML = "";
-			console.log(test);
+				
+			/*code for Query 3*/
+			const excelForm = document.getElementById("excelform");
+			const excelTable = document.getElementById("exceltable");
+			const excelResult = document.getElementById("excelresult");
 			
-			test.forEach(e =>{
-				const row3 = document.createElement("tr");
-				row3.innerHTML = `<td>${e.username}</td><td>${e.title}</td>`
-				excelResult.appendChild(row3);	
-			})
-		}
-		/*code for Query 7*/
+			
+			excelForm.addEventListener("submit", getExcel);
+			
+			async function getExcel(e) {
+				e.preventDefault();
+				const user = document.getElementById("excelinput").value;
+				
+				const ress = await fetch("/excellentitems", {
+					method: "POST",
+					headers: { "Content-Type" : "application/json"},
+					body: JSON.stringify({user})
+					});
+				console.log(user);
+				const response = await fetch("/excellentitems", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ user }),
+				});
+				const test = await response.json();
+				excelResult.innerHTML = "";
+				console.log(test);
+				
+				test.forEach(e =>{
+					const row3 = document.createElement("tr");
+					row3.innerHTML = `<td>${e.username}</td><td>${e.title}</td>`
+					excelResult.appendChild(row3);	
+				})
+			}
+			/*code for Query 7*/
 			const baseUrl7 = 'http://localhost:3000/nopoor';
 			const poorBtn = document.getElementById('nopoorbutton');
 			const nopoorResult = document.getElementById('nopoorresult');
@@ -375,6 +390,29 @@
 					row7.innerHTML = `<td>${e.username}</td>`
 					nopoorResult.appendChild(row7)
 					})
+			}
+			
+			const baseUrl8 = 'http://localhost:3000/allpoor';
+			const allpoorBtn = document.getElementById('allpoorbutton');
+			const allpoorResult = document.getElementById('allpoorresult');
+			
+			allpoorBtn.addEventListener('click', getAllPoor);
+			
+			async function getAllPoor(e){
+				e.preventDefault();
+				const res = await fetch(baseUrl8,
+				{
+					method: 'GET'
+				})
+				const data8 = await res.json();
+				console.log(data8);
+				allpoorResult.innerHTML = "";
+				
+				data8.forEach(e => {
+					const row8 = document.createElement("tr");
+					row8.innerHTML = `<td>${e.username}</td>`
+					allpoorResult.appendChild(row8);
+				})
 			}
 		
 		/*Phase 2 search*/
