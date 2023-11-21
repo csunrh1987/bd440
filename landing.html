@@ -68,7 +68,8 @@
 	<body>
 		<h1>Welcome</h1>
 		<div class="form">
-			<br>Add an item<br>
+			<br>Add an item to database<br>
+			<br>
 			<form action="/additem" method="POST">			
 				<label for="inputTitle">Title</label>
 				<input type="text" name="intitle">
@@ -84,39 +85,43 @@
 				
 				<label for="inputPrice">Price: </label>
 				<input type="text" name="inprice">
+				<br>
 				<button type="submit">Add Item</button>
 			</form>
 		</div>	
 		
 		<hr>
 		<div class="form">
-			<br>Query 1</br>
+			<br>Query 1 - Most expensive item by category</br>
+			<br>
 			<form>
 				<table>
 					<tr>
-						<td>Category</td>
-						<td>Price</td>
+						<th>Category</th>
+						<th>Price</th>
 					</tr>
 					<tbody id="maxresult">
 					</tbody>					
 				</table>	
-				<button id="maxbutton">MaxBtn</button>
+				<button id="maxbutton">List Items</button>
 			</form>
 		</div>
 				
 		<hr>
 		<div class="form">
-			<br>Query 3</br>
+			<br>Query 3 - Items with all "Excellent" or "Good" reviews</br>
+			<br>
 			<form id="excelform" action="/excellentitems" method="POST">
 				<label for = "exceluser">Enter a username: </label>
 				<input type="text" id="excelinput" name="exceluser" placeholder="Enter Username">
-				<button type="submit">Find Excellent</button>
+				<br>
+				<button type="submit">List Items</button>
 			</form>
 			
 			<table id="exceltable">
 				<tr>
-					<td>Username</td>
-					<td>Title</td>
+					<th>Username</th>
+					<th>Title</th>
 				</tr>
 				<tbody id="excelresult">
 				
@@ -128,31 +133,34 @@
 		
 		<hr>
 		<div class="form">
-			<br>Query 7</br>
+			<br>Query 7 - Users who never posted a "Poor" review</br>
+			<br>
+			<br>
 			<form>
 				<table>
 					<tr>
-						<td>Username</td>
+						<th>Username</th>
 					</tr>
 					<tbody id="nopoorresult">
 					</tbody>
 				</table>
-				<button id="nopoorbutton">NoPoorBtn</button>
+				<button id="nopoorbutton">List Users</button>
 			</form>
 		</div>
 		
 		<hr>
 		<div class="form">
-			<br>Query 8</br>
+			<br>Query 8 - Users who posted all "Poor" reviews</br>
+			<br>
 			<form>
 				<table>
 					<tr>
-						<td>Username</td>
+						<th>Username</th>
 					</tr>
 					<tbody id="allpoorresult">
 					</tbody>
 				</table>
-				<button id="allpoorbutton">AllPoorBtn</button>
+				<button id="allpoorbutton">List Users</button>
 			</form>
 		</div>
 
