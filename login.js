@@ -335,6 +335,85 @@ app.post('/mostReviewsOnDate', (req, res) => {
     });
 });
 
+//Code for favoriting a seller or an item
+
+// Fetch userId for the "favorites" query
+const authenticateUser = (req, res, next) => {
+    // Check if the user is logged in
+    if (!req.session.username) {
+        return res.status(401).send('Unauthorized');
+    }
+
+    // If the user is logged in, fetch the user_id from the database
+    const sql = 'SELECT id FROM registration WHERE username = ?';
+    conn.query(sql, [req.session.username], (err, results) => {
+        if (err) {
+            console.error('Error fetching user_id:', err);
+            res.status(500).send('Internal Server Error');
+        } else if (results.length > 0) {
+            req.session.userId = results[0].id;
+            next(); // Continue to the next middleware or route
+        } else {
+            res.status(401).send('Unauthorized');
+        }
+    });
+};
+
+// Fetch list of sellers
+app.get('/sellers', (req, res) => {
+    conn.query('SELECT id, username FROM registration', (error, results) => {
+        if (error) {
+            console.error('Error fetching sellers:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            const sellers = results.map(result => ({ id: result.id, name: result.username }));
+            res.json(sellers);
+        }
+    });
+});
+
+// Fetch list of items
+app.get('/items', (req, res) => {
+    conn.query('SELECT item_id, title FROM useritem', (error, results) => {
+        if (error) {
+            console.error('Error fetching items:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            const items = results.map(result => ({ id: result.item_id, name: result.title }));
+            res.json(items);
+        }
+    });
+});
+
+app.post('/addToFavorites', authenticateUser, (req, res) => {
+    const itemId = req.body.id;
+    const userId = req.session.userId;
+    const favType = req.body.fav_type;
+
+    let idColumnName;
+
+    if (favType === 'item') {
+        idColumnName = 'fav_item_id';
+    } else if (favType === 'seller') {
+        idColumnName = 'fav_seller_id';
+    } else {
+        return res.status(400).json({ success: false, message: 'Invalid favorite type' });
+    }
+
+    const sql = `INSERT INTO favorites (own_user_id, ${idColumnName}, fav_type) VALUES (?, ?, ?)`;
+
+    conn.query(sql, [userId, itemId, favType], (err) => {
+        if (err) {
+            console.error(`Error adding favorite ${favType}:`, err);
+            res.status(500).json({ success: false, message: 'Internal Server Error' });
+        } else {
+            console.log(`Added favorite ${favType} for user ${userId}, Item ID: ${itemId}`);
+            res.status(200).json({ success: true, message: `Favorite ${favType} added successfully` });
+        }
+    });
+});
+
+
 //query 7 phase3
 app.get('/nopoor', (req, res) =>{
 	const sql = 'SELECT DISTINCT G.username FROM registration G, reviews R WHERE G.id = R.reviewer_id AND R.reviewer_id NOT IN (SELECT reviewer_id FROM reviews WHERE review_text = ?)'

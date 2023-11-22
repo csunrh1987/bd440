@@ -40,3 +40,16 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (item_id) REFERENCES useritem(item_id),
     FOREIGN KEY (reviewer_id) REFERENCES registration(id)
 );
+
+
+//Sql function to create favorites table 
+CREATE TABLE IF NOT EXISTS favorites (
+  fav_id INT AUTO_INCREMENT PRIMARY KEY,
+  own_user_id INT,
+  fav_item_id INT DEFAULT NULL,
+  fav_seller_id INT DEFAULT NULL,
+  fav_type ENUM('item', 'seller'),
+  FOREIGN KEY (own_user_id) REFERENCES registration(id),
+  FOREIGN KEY (fav_item_id) REFERENCES useritem(item_id),
+  FOREIGN KEY (fav_seller_id) REFERENCES registration(id)
+);
