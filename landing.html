@@ -225,6 +225,24 @@
 				</tbody>
 			</table>
 		</div>
+		<div class="form">
+			<h2>Favorite Sellers</h2>
+			<form id="favorite-sellers-form">
+				<label for="sellerSelect">Select a seller:</label>
+				<select id="sellerSelect" name="seller_id"></select>
+				<button type="button" id="addToFavoriteSellers">Add to Favorites</button>
+			</form>
+			<table id="favorite-sellers-table"></table>
+		</div>
+		<div class="form">
+			<h2>Favorite Items</h2>
+			<form id="favorite-items-form">
+				<label for="itemSelect">Select an item:</label>
+				<select id="itemSelect" name="item_id"></select>
+				<button type="button" id="addToFavoriteItems">Add to Favorites</button>
+			</form>
+			<table id="favorite-items-table"></table>
+		</div>
 
 		<hr>java<hr>
 		<div id="add-review">
@@ -422,6 +440,69 @@
 					console.error("Error in mostReviewsOnDate:", response.statusText);
 					mostReviewsResultBody.innerHTML = "<p>An error occurred while fetching users with the most reviews.</p>";
 				}
+			});
+			
+			/*Code for Adding favorites */
+			document.addEventListener('DOMContentLoaded', function () {
+				// Function to populate a dropdown
+				function populateDropdown(dropdown, endpoint) {
+					fetch(endpoint)
+						.then(response => response.json())
+						.then(data => {
+							data.forEach(item => {
+								const option = document.createElement('option');
+								option.value = item.id;
+								option.text = item.name;
+								dropdown.appendChild(option);
+							});
+						})
+						.catch(error => {
+							console.error('Error fetching data:', error);
+						});
+				}
+		
+				// Function to add to favorites
+				function addToFavorites(endpoint, selectedId, favType) {
+					fetch(endpoint, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ id: selectedId, fav_type: favType }),
+					})
+					.then(response => response.json())
+					.then(data => {
+						console.log(data);
+						if (data.success) {
+							alert(data.message);
+						} else {
+							alert('Error adding to favorites:', data.message);
+						}
+					})
+					.catch(error => {
+						console.error('Error adding to favorites:', error);
+					});
+				} 
+		
+				// Fetch and populate sellers dropdown
+				const sellerSelect = document.getElementById('sellerSelect');
+				populateDropdown(sellerSelect, '/sellers');
+		
+				// Fetch and populate items dropdown
+				const itemSelect = document.getElementById('itemSelect');
+				populateDropdown(itemSelect, '/items');
+		
+				// Event listeneer for favorite sellers button
+				document.getElementById('addToFavoriteSellers').addEventListener('click', function () {
+					const selectedSellerId = sellerSelect.value;
+					addToFavorites('/addToFavorites', selectedSellerId, 'seller');
+				});
+		
+				// Event listener for favorite items button
+				document.getElementById('addToFavoriteItems').addEventListener('click', function () {
+					const selectedItemId = itemSelect.value;
+					addToFavorites('/addToFavorites', selectedItemId, 'item');
+				});
 			});
 			
 			/*code for Query 7*/
