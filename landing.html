@@ -208,6 +208,23 @@
 				</tbody>
 			</table>
 		</div>
+		<div class="form">
+			<br>Most Reviews on 2023-09-21<br>
+			<form id="most-reviews-form" action="/mostReviewsOnDate" method="POST">
+				<button type="submit">Display Users</button>
+			</form>
+			<h2>Users with the most reviews on 2023-09-21:</h2>
+			<table id="most-reviews-table">
+				<thead>
+					<tr>
+						<th>Username</th>
+						<th>Number of Reviews</th>
+					</tr>
+				</thead>
+				<tbody id="most-reviews-result">
+				</tbody>
+			</table>
+		</div>
 
 		<hr>java<hr>
 		<div id="add-review">
@@ -376,6 +393,37 @@
 					excelResult.appendChild(row3);	
 				})
 			}
+			
+			/*Code for query 4*/
+			const mostReviewsForm = document.getElementById("most-reviews-form");
+			const mostReviewsTable = document.getElementById("most-reviews-table");
+			const mostReviewsResultBody = document.getElementById("most-reviews-result");
+		
+			mostReviewsForm.addEventListener("submit", async (e) => {
+				e.preventDefault();
+		
+				const response = await fetch("/mostReviewsOnDate", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+		
+				if (response.ok) {
+					const data = await response.json();
+		
+					data.users.forEach(user => {
+						const row = document.createElement("tr");
+						row.innerHTML = `<td>${user.username}</td><td>${user.num_reviews}</td>`;
+						mostReviewsResultBody.appendChild(row);
+					});
+		
+				} else {
+					console.error("Error in mostReviewsOnDate:", response.statusText);
+					mostReviewsResultBody.innerHTML = "<p>An error occurred while fetching users with the most reviews.</p>";
+				}
+			});
+			
 			/*code for Query 7*/
 			const baseUrl7 = 'http://localhost:3000/nopoor';
 			const poorBtn = document.getElementById('nopoorbutton');
