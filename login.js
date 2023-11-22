@@ -303,6 +303,38 @@ app.post('/excellentitems', (req,res) => {
 	});
 });
 
+//Query 4 phase 3
+app.post('/mostReviewsOnDate', (req, res) => {
+    const targetDate = '2023-09-21'; 
+
+    const query = `
+        SELECT r.username, COUNT(rev.id) AS num_reviews
+        FROM registration r
+        JOIN reviews rev ON r.id = rev.reviewer_id
+        WHERE rev.date = ?
+        GROUP BY r.username
+        HAVING num_reviews = (
+            SELECT COUNT(rev.id) AS max_reviews
+            FROM reviews rev
+            WHERE rev.date = ?
+            GROUP BY rev.reviewer_id
+            ORDER BY max_reviews DESC
+            LIMIT 1
+        );
+    `;
+
+    conn.query(query, [targetDate, targetDate], (error, results) => {
+        if (error) {
+            console.error('Error in mostReviewsOnDate:', error);
+            return res.status(500).send('An error occurred while fetching users with the most reviews.');
+        }
+
+        const users = results.map(result => ({ username: result.username, num_reviews: result.num_reviews }));
+		console.log('Selected Users for query 4:', users);
+        res.json({ users });
+    });
+});
+
 //query 7 phase3
 app.get('/nopoor', (req, res) =>{
 	const sql = 'SELECT DISTINCT G.username FROM registration G, reviews R WHERE G.id = R.reviewer_id AND R.reviewer_id NOT IN (SELECT reviewer_id FROM reviews WHERE review_text = ?)'
