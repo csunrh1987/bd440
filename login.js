@@ -330,7 +330,6 @@ app.post('/mostReviewsOnDate', (req, res) => {
         }
 
         const users = results.map(result => ({ username: result.username, num_reviews: result.num_reviews }));
-		console.log('Selected Users for query 4:', users);
         res.json({ users });
     });
 });
@@ -401,7 +400,9 @@ app.post('/addToFavorites', authenticateUser, (req, res) => {
     }
 
     const sql = `INSERT INTO favorites (own_user_id, ${idColumnName}, fav_type) VALUES (?, ?, ?)`;
-
+	
+	console.log('Selected Seller ID:', itemId);
+	
     conn.query(sql, [userId, itemId, favType], (err) => {
         if (err) {
             console.error(`Error adding favorite ${favType}:`, err);
@@ -413,6 +414,30 @@ app.post('/addToFavorites', authenticateUser, (req, res) => {
     });
 });
 
+// Query 5 phase 3
+app.post('/getCommonFavoriteSellers', (req, res) => {
+    const user1 = req.body.user1;
+    const user2 = req.body.user2;
+
+    const sql = `
+        SELECT r1.username AS user1, r2.username AS user2, rCommon.username AS common_fav_seller
+        FROM favorites AS f1
+        JOIN favorites AS f2 ON f1.fav_seller_id = f2.fav_seller_id
+        JOIN registration AS r1 ON f1.own_user_id = r1.id
+        JOIN registration AS r2 ON f2.own_user_id = r2.id
+        JOIN registration AS rCommon ON f1.fav_seller_id = rCommon.id
+        WHERE r1.username = ? AND r2.username = ? AND f1.fav_type = 'seller' AND f2.fav_type = 'seller';
+    `;
+
+    conn.query(sql, [user1, user2], (err, results) => {
+        if (err) {
+            console.error('Error fetching common favorite sellers:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(results);
+        }
+    });
+});
 
 //query 7 phase3
 app.get('/nopoor', (req, res) =>{
