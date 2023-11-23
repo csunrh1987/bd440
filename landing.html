@@ -165,84 +165,107 @@
 		</div>
 
 		<hr>riley<hr>
-		<div class="form">	
-			<form id="search-form" action="/searchcategory" method="POST">
-				<label for="category">Enter a category: </label>
-				<input type="text" id="input" name="category" placeholder="Category">
-				<button type="submit">Search</button>
-			</form>
-		<h2>Results:</h2>
-		<table id="results-table">
-			<thead>
-				<tr>
-					<th>Items</th>
-					<th>Category</th>
-				</tr>
-			</thead>
-			<tbody id="results-body">
-
-			</tbody>
-		</table>
-		</div>
-		<div class="form">
-			<br>Search Users by Categories<br>
-			<form id="search-categories-form" action="/searchUsersByCategories" method="POST">
-				<label for="category1">Category 1:</label>
-				<input type="text" id="category1" name="category1" placeholder="Category 1">
-				<br>
-		
-				<label for="category2">Category 2:</label>
-				<input type="text" id="category2" name="category2" placeholder="Category 2">
-				<br>
-		
-				<button type="submit" id="searchCategories">Search Users</button>
-			</form>
-			<h2>Users who posted at least two items in a day:</h2>
-			<table id="users-table">
+		<div id="container">
+			<div class="form">	
+				<form id="search-form" action="/searchcategory" method="POST">
+					<label for="category">Enter a category: </label>
+					<input type="text" id="input" name="category" placeholder="Category">
+					<button type="submit">Search</button>
+				</form>
+			<h2>Results:</h2>
+			<table id="results-table">
 				<thead>
 					<tr>
-						<th>Username</th>
+						<th>Items</th>
+						<th>Category</th>
 					</tr>
 				</thead>
-				<tbody id="users-result">
+				<tbody id="results-body">
 				</tbody>
 			</table>
-		</div>
-		<div class="form">
-			<br>Most Reviews on 2023-09-21<br>
-			<form id="most-reviews-form" action="/mostReviewsOnDate" method="POST">
-				<button type="submit">Display Users</button>
-			</form>
-			<h2>Users with the most reviews on 2023-09-21:</h2>
-			<table id="most-reviews-table">
-				<thead>
-					<tr>
-						<th>Username</th>
-						<th>Number of Reviews</th>
-					</tr>
-				</thead>
-				<tbody id="most-reviews-result">
-				</tbody>
-			</table>
-		</div>
-		<div class="form">
-			<h2>Favorite Sellers</h2>
-			<form id="favorite-sellers-form">
-				<label for="sellerSelect">Select a seller:</label>
-				<select id="sellerSelect" name="seller_id"></select>
-				<button type="button" id="addToFavoriteSellers">Add to Favorites</button>
-			</form>
-			<table id="favorite-sellers-table"></table>
-		</div>
-		<div class="form">
-			<h2>Favorite Items</h2>
-			<form id="favorite-items-form">
-				<label for="itemSelect">Select an item:</label>
-				<select id="itemSelect" name="item_id"></select>
-				<button type="button" id="addToFavoriteItems">Add to Favorites</button>
-			</form>
-			<table id="favorite-items-table"></table>
-		</div>
+			</div>
+			<div class="form">
+				<br>Search Users by Categories<br>
+				<form id="search-categories-form" action="/searchUsersByCategories" method="POST">
+					<label for="category1">Category 1:</label>
+					<input type="text" id="category1" name="category1" placeholder="Category 1">
+					<br>
+			
+					<label for="category2">Category 2:</label>
+					<input type="text" id="category2" name="category2" placeholder="Category 2">
+					<br>
+			
+					<button type="submit" id="searchCategories">Search Users</button>
+				</form>
+				<h2>Users who posted at least two items in a day:</h2>
+				<table id="users-table">
+					<thead>
+						<tr>
+							<th>Username</th>
+						</tr>
+					</thead>
+					<tbody id="users-result">
+					</tbody>
+				</table>
+			</div>
+			<div class="form">
+				<br>Most Reviews on 2023-09-21<br>
+				<form id="most-reviews-form" action="/mostReviewsOnDate" method="POST">
+					<button type="submit">Display Users</button>
+				</form>
+				<h2>Users with the most reviews on 2023-09-21:</h2>
+				<table id="most-reviews-table">
+					<thead>
+						<tr>
+							<th>Username</th>
+							<th>Number of Reviews</th>
+						</tr>
+					</thead>
+					<tbody id="most-reviews-result">
+					</tbody>
+				</table>
+			</div>
+			<div class="form">
+				<h2>Favorite Sellers</h2>
+				<form id="favorite-sellers-form">
+					<label for="sellerSelect">Select a seller:</label>
+					<select id="sellerSelect" name="seller_id"></select>
+					<button type="button" id="addToFavoriteSellers">Add to Favorites</button>
+				</form>
+				<table id="favorite-sellers-table"></table>
+			</div>
+			<div class="form">
+				<h2>Favorite Items</h2>
+				<form id="favorite-items-form">
+					<label for="itemSelect">Select an item:</label>
+					<select id="itemSelect" name="item_id"></select>
+					<button type="button" id="addToFavoriteItems">Add to Favorites</button>
+				</form>
+				<table id="favorite-items-table"></table>
+			</div>
+			<div class="form" id="commonFavoriteSellers">
+				<h2>Common Favorite Sellers</h2>
+				
+				<label for="user1Select">Select first user:</label>
+				<select id="user1Select" name="user1"></select>
+			
+				<label for="user2Select">Select second user:</label>
+				<select id="user2Select" name="user2"></select>
+			
+				<button type="button" id="getCommonFavoriteSellersBtn">Get Sellers</button>
+			
+				<table id="commonFavoriteSellersTable">
+					<thead>
+						<tr>
+							<th>First user</th>
+							<th>Second user</th>
+							<th>Common seller</th>
+						</tr>
+					</thead>
+					<tbody id="commonFavoriteSellersTableBody"></tbody>
+				</table>
+			</div>
+		</div> <!-- riley end -->
 
 		<hr>java<hr>
 		<div id="add-review">
@@ -445,7 +468,7 @@
 			/*Code for Adding favorites */
 			document.addEventListener('DOMContentLoaded', function () {
 				// Function to populate a dropdown
-				function populateDropdown(dropdown, endpoint) {
+				function populateFavDropdown(dropdown, endpoint) {
 					fetch(endpoint)
 						.then(response => response.json())
 						.then(data => {
@@ -486,11 +509,11 @@
 		
 				// Fetch and populate sellers dropdown
 				const sellerSelect = document.getElementById('sellerSelect');
-				populateDropdown(sellerSelect, '/sellers');
+				populateFavDropdown(sellerSelect, '/sellers');
 		
 				// Fetch and populate items dropdown
 				const itemSelect = document.getElementById('itemSelect');
-				populateDropdown(itemSelect, '/items');
+				populateFavDropdown(itemSelect, '/items');
 		
 				// Event listeneer for favorite sellers button
 				document.getElementById('addToFavoriteSellers').addEventListener('click', function () {
@@ -502,6 +525,81 @@
 				document.getElementById('addToFavoriteItems').addEventListener('click', function () {
 					const selectedItemId = itemSelect.value;
 					addToFavorites('/addToFavorites', selectedItemId, 'item');
+				});
+			});
+
+			/*Code for query 5*/
+			document.addEventListener('DOMContentLoaded', function () {
+
+				function populateComFavDropdown(dropdown, endpoint) {
+					fetch(endpoint)
+						.then(response => response.json())
+						.then(data => {
+							console.log(data);
+							data.forEach(item => {
+								const option = document.createElement('option');
+								option.value = item.name;
+								option.text = item.name;
+								dropdown.appendChild(option);
+							});
+						})
+						.catch(error => {
+							console.error('Error fetching data:', error);
+						});
+				}
+		
+				// Function to get common favorite sellers
+				function getCommonFavoriteSellers(user1, user2) {
+					console.log(`User 1: ${user1}, User 2: ${user2}`);
+					const tableBody = document.getElementById('commonFavoriteSellersTableBody');
+					while (tableBody.firstChild) {
+						tableBody.removeChild(tableBody.firstChild);
+					}
+
+					fetch('/getCommonFavoriteSellers', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ user1, user2 }),
+					})
+					.then(response => response.json())
+					.then(data => {
+						console.log(data);
+						
+						if (data.length === 0) {
+							alert('No common favorite sellers found.');
+						} else {
+							data.forEach(item => {
+							const row = document.createElement("tr");
+							row.innerHTML = `<td>${item.user1}</td><td>${item.user2}</td><td>${item.common_fav_seller}</td>`;
+							tableBody.appendChild(row);
+							});
+						}
+						
+					})
+					.catch(error => {
+						console.error('Error fetching common favorite sellers:', error);
+					});
+				}
+		
+				// Fetch and populate users 1 dropdown using 'name' property
+				const user1Select = document.getElementById('user1Select');
+				populateComFavDropdown(user1Select, '/sellers');
+
+				// Fetch and populate users 2 dropdown using 'name' property
+				const user2Select = document.getElementById('user2Select');
+				populateComFavDropdown(user2Select, '/sellers');
+
+				// Add event listener for Get Common Sellers button
+				document.getElementById('getCommonFavoriteSellersBtn').addEventListener('click', function () {
+					const user1 = user1Select.value;
+					const user2 = user2Select.value;
+
+					console.log('Selected User 1:', user1);
+					console.log('Selected User 2:', user2);
+
+					getCommonFavoriteSellers(user1, user2);
 				});
 			});
 			
