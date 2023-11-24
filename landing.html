@@ -293,6 +293,24 @@
 				<button type="button" id="submitReview">Submit Review</button>
 			</form>
 		</div>
+
+		<div>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<h2>
+				Display those users such that each item they posted so far never received any "poor" reviews.
+			</h2>
+		</div>
+		
+
+			<button id="NoPoorReviewsBtn">Show No Poor Reviews Table</button>
+			<table id="NoPoorReviewsResult">
+				<!-- Table will be populated dynamically -->
+			</table>
+
+			<!--Javier End -->
+
+		
 		<hr>
 		<h2>Create table button</h2>
 			<form action="/createtable" method="post">
@@ -339,23 +357,7 @@
 		  });
 
 
-		<div>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<h2>
-				Display those users such that each item they posted so far never received any "poor" reviews.
-			</h2>
-		</div>
-		
-
-			<button id="NoPoorReviewsBtn">Show No Poor Reviews Table</button>
-			<table id="NoPoorReviewsResult">
-				<!-- Table will be populated dynamically -->
-			</table>
-
-			<!--Javier End -->
-		
-
+	
 			/*code for Query 1*/
 			const baseUrl = 'http://localhost:3000/maxcat';
 			const maxBtn = document.getElementById('maxbutton');
