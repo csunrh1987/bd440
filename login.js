@@ -467,5 +467,31 @@ app.get('/allpoor', (req, res) =>{
 			
 });
 
+//query 9 phase 3
+app.get('/NoPoorReviews', (req, res) => {
+	const sql = `
+		SELECT DISTINCT G.username, R.review_text, G.id 
+		FROM registration G
+		LEFT JOIN reviews R ON G.id = R.reviewer_id
+		WHERE G.id NOT IN (
+			SELECT R.reviewer_id 
+			FROM reviews R 
+			WHERE R.review_text = 'Poor'
+		) OR R.review_text IS NULL;
+	`;
+
+	conn.query(sql, function (err, result) {
+		if (err) throw err;
+
+		const items = result.map(result => ({
+			username: result.username,
+		}));
+
+		console.log(items);
+		res.send(items);
+	});
+});
+
+
 app.listen(port);
 
