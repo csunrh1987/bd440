@@ -303,10 +303,10 @@
 
 		<!--Script to handle review calls when submit button is pressed-->
 		<script>
-			document.getElementById('submitReview').addEventListener('click', function () {
-			const item_id = document.getElementById('itemSelect').value;
-		    const rating = document.getElementById('ratingSelect').value;
-		    const reviewText = document.getElementById('reviewText').value;
+		document.getElementById('submitReview').addEventListener('click', function () {
+		const item_id = document.getElementById('itemSelect').value;
+		const rating = document.getElementById('ratingSelect').value;
+		const reviewText = document.getElementById('reviewText').value;
 		
 		    const data = { item_id, rating, reviewText };
 		
@@ -337,6 +337,24 @@
 		      alert('An error occurred. Please try again.');
 		    });
 		  });
+
+
+		<div>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<h2>
+				Display all the users who never posted any "excellent" item: an item is excellent if at least
+				three reviews are excellent.
+			</h2>
+		</div>
+		
+
+			<button id="NoPoorReviewsBtn">Show No Poor Reviews Table</button>
+			<table id="NoPoorReviewsResult">
+				<!-- Table will be populated dynamically -->
+			</table>
+
+			<!--Javier End -->
 		
 
 			/*code for Query 1*/
@@ -364,6 +382,8 @@
 					maxresult.appendChild(row0);	
 				})
 			}
+
+			
 				
 			/*Code for query 2*/
 			const searchCategoriesForm = document.getElementById("search-categories-form");
@@ -679,6 +699,34 @@
 				});
 			}
 		});
+
+
+
+
+		 /*Code for Query 9*/
+                const baseUrl9 = 'http://localhost:3000/NoPoorReviews';
+                const NoPoorBtn = document.getElementById('NoPoorReviewsBtn');
+                const NoPoorReviewsResult = document.getElementById('NoPoorReviewsResult');
+
+                NoPoorReviewsBtn.addEventListener('click', excNoPoorReviews);
+
+                async function excNoPoorReviews(e) {
+                    e.preventDefault();
+                    const res = await fetch(baseUrl9, {
+                        method: 'GET'
+                    });
+                    const data9 = await res.json();
+                    console.log(data9);
+                    NoPoorReviewsResult.innerHTML = "";
+
+                    data9.forEach(e => {
+                        const row7 = document.createElement("tr");
+                        row7.innerHTML = `<td>${e.username}</td>`;
+                        NoPoorReviewsResult.appendChild(row7);
+                    });
+                }
+
+			
 		</script>
 	
 	</body>
