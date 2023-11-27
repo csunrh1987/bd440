@@ -439,6 +439,40 @@ app.post('/getCommonFavoriteSellers', (req, res) => {
     });
 });
 
+
+// Query 6 phase 3
+app.get('/nonExcellentUsers', (req, res) => {
+	const sql = `
+        SELECT DISTINCT r.username
+        FROM registration r
+        WHERE r.username NOT IN (
+            SELECT DISTINCT r.username
+            FROM reviews rev
+            JOIN useritem u ON rev.item_id = u.item_id
+            JOIN registration r ON u.user_id = r.id
+            WHERE rev.review_text = 'Excellent'
+            GROUP BY r.username, u.item_id
+            HAVING COUNT(DISTINCT rev.reviewer_id) >= 3
+        )
+    `;
+
+	conn.query(sql, (error, results) => {
+		if (error) {
+			console.error('Error fetching users with no excellent items:', error);
+			res.status(500).json({ error: 'Internal Server Error' });
+		} else {
+			const users = results.map(result => result.username);
+			res.json({ users });
+		}
+	});
+});
+
+
+
+
+
+
+
 //query 7 phase3
 app.get('/nopoor', (req, res) =>{
 	const sql = 'SELECT DISTINCT G.username FROM registration G, reviews R WHERE G.id = R.reviewer_id AND R.reviewer_id NOT IN (SELECT reviewer_id FROM reviews WHERE review_text = ?)'
@@ -491,6 +525,39 @@ app.get('/NoPoorReviews', (req, res) => {
 		res.send(items);
 	});
 });
+
+
+//Query 10 Phase 3
+// Query for Excellent Review Pairs
+app.get('/excellentReviewPairs', (req, res) => {
+    const sql = `
+        SELECT DISTINCT userA, userB
+        FROM (
+            SELECT R1.reviewer_id AS userA, R2.reviewer_id AS userB
+            FROM reviews R1
+            JOIN reviews R2 ON R1.item_id = R2.item_id
+            WHERE R1.review_text = 'Excellent' AND R2.review_text = 'Excellent'
+            GROUP BY R1.reviewer_id, R2.reviewer_id
+            HAVING COUNT(R1.item_id) = (SELECT COUNT(DISTINCT item_id) FROM reviews WHERE reviewer_id = R1.reviewer_id)
+        ) AS excellentReviewPairs
+    `;
+
+    conn.query(sql, (error, results) => {
+        if (error) {
+            console.error('Error fetching excellent review pairs:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            const pairs = results.map(result => ({
+                userA: result.userA,
+                userB: result.userB,
+            }));
+            res.json({ pairs });
+        }
+    });
+});
+
+
+
 
 
 app.listen(port);
