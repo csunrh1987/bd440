@@ -80,20 +80,23 @@ app.post('/create', (req, res) => {
 	let username = req.body.username;
 	let password = req.body.password;
 	let email = req.body.email;
+	let fname = req.body.fname;
+	let lname = req.body.lname;
 	let confirm_email = req.body.confirmemail;
+	console.log(fname);
 
 	
 	conn.query('SELECT * FROM registration WHERE username=? OR email=?', [username, email],
 	function(error, results, field){
 		if(error) throw error;
 		if(!results.length){
-			conn.query('INSERT INTO registration (username,password, email) VALUES(?,?,?)', [username, password, email], function (err, result, fields){
+			conn.query('INSERT INTO registration (username, password, firstName, lastName, email) VALUES(?,?,?,?,?)', [username, password, fname, lname, email], function (err, result, fields){
 				if(error) throw error;
 			});
-			res.send("User created");
+			res.send("User created </h1><a href='/signup'>Click to go back</a>");
 		}
 		else{
-			res.send("<h1>User already exists! </h1><a href='/signup'>Click to go back</a>");
+			res.send("<h1>User already exists! </h1><a href='/login'>Click to login</a>");
 			
 		}
 		res.end();
