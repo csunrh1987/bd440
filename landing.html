@@ -292,24 +292,66 @@
 				<br>
 				<button type="button" id="submitReview">Submit Review</button>
 			</form>
-		</div>
-
+	<!--Query 6 Phase 3-->
 		<div>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<h2>
+				Display all the users who never posted any "excellent" items: an item is excellent if at least
+				three reviews are excellent.
+			</h2>
+		</div>
+		<!--Button for Query 6 Phase 3-->
+		<button id="showNonExcellentUsers">Show Users with No Excellent Items</button>
+		<table id="nonExcellentUsersResult">
+			<!-- Table headers -->
+			<thead>
+				<tr>
+					<th>Username</th>
+				</tr>
+			</thead>
+			<!-- Table body (will be populated dynamically) -->
+			<tbody>
+			</tbody>
+		</table>
+
+
+
+	<!--Query 9 Phase 3-->
+		<div>
 			<h2>
 				Display those users such that each item they posted so far never received any "poor" reviews.
 			</h2>
 		</div>
-		
+		<button id="NoPoorReviewsBtn">Show No Poor Reviews Table</button>
+		<table id="NoPoorReviewsResult">
+			<!-- Table will be populated dynamically -->
+		</table>
 
-			<button id="NoPoorReviewsBtn">Show No Poor Reviews Table</button>
-			<table id="NoPoorReviewsResult">
-				<!-- Table will be populated dynamically -->
+
+
+
+		<div>
+	<!--Query 10 Phase 3-->
+			<h2>
+				List a user pair (A, B) such that they always gave each other "excellent" reviews for every single
+				item they posted.
+			</h2>
+			<!--Button for Query 10 Phase 3-->
+			<button id="excellentReviewPairsBtn" type="button">Show Excellent Review Pairs</button>
+
+			<table id="excellentReviewPairsResult">
+				<!-- Table headers -->
+				<thead>
+					<tr>
+						<th>User A</th>
+						<th>User B</th>
+					</tr>
+				</thead>
+				<!-- Table body (will be populated dynamically) -->
+				<tbody>
+				</tbody>
 			</table>
-
-			<!--Javier End -->
-
+		</div>
+	<!--Javier End -->
 		
 		<hr>
 		<h2>Create table button</h2>
@@ -623,6 +665,38 @@
 					getCommonFavoriteSellers(user1, user2);
 				});
 			});
+
+				//Code for Query 6
+				document.getElementById('showNonExcellentUsers').addEventListener('click', function () {
+					fetch('/nonExcellentUsers', {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+					})
+						.then(response => response.json())
+						.then(data => {
+							// Get the table body
+							const tableBody = document.getElementById('nonExcellentUsersResult').getElementsByTagName('tbody')[0];
+
+							// Clear existing rows
+							tableBody.innerHTML = '';
+
+							// Populate the table dynamically
+							data.users.forEach(username => {
+								const row = tableBody.insertRow();
+								const cell = row.insertCell(0);
+								cell.textContent = username;
+							});
+						})
+						.catch(error => {
+							console.error('Error fetching non-excellent users:', error);
+						});
+				});
+			
+
+
+			
 			
 			/*code for Query 7*/
 			const baseUrl7 = 'http://localhost:3000/nopoor';
@@ -726,6 +800,38 @@
                         NoPoorReviewsResult.appendChild(row7);
                     });
                 }
+
+		/*Code for Query 10*/
+			document.getElementById('excellentReviewPairsBtn').addEventListener('click', function () {
+				fetch('/excellentReviewPairs', {
+					method: 'GET',
+					headers: {
+							'Content-Type': 'application/json'
+						},
+					})
+						.then(response => response.json())
+						.then(data => {
+							// Get the table body
+							const tableBody = document.getElementById('excellentReviewPairsResult').getElementsByTagName('tbody')[0];
+
+							// Clear existing rows
+							tableBody.innerHTML = '';
+
+							// Populate the table dynamically
+							data.pairs.forEach(pair => {
+								const row = tableBody.insertRow();
+								const cellA = row.insertCell(0);
+								const cellB = row.insertCell(1);
+								cellA.textContent = pair.userA;
+								cellB.textContent = pair.userB;
+							});
+						})
+						.catch(error => {
+							console.error('Error fetching excellent review pairs:', error);
+						});
+				});
+
+		
 
 			
 		</script>
