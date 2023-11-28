@@ -15,6 +15,7 @@
 			}
 
 			h2{
+				font-size: 23px;
 				text-align: left;
 				margin-bottom: 15px;
 			}
@@ -61,6 +62,23 @@
 			}
 			th{
 				background-color: lightblue;
+			}
+			select{
+				width: 200px;
+				padding: 8px;
+				font-size: 15px;
+				border: 1px solid gray;
+				border-radius: 4px;
+				background-color: white;
+				color: #333;
+				font-family:inherit;
+			}
+			option{
+				font-family: inherit;
+			}
+			select:focus{
+				outline:none;
+				border-color: black;
 			}
         </style>
 		<title>Welcome</title>
@@ -164,7 +182,7 @@
 			</form>
 		</div>
 
-		<hr>riley<hr>
+		<hr>Riley<hr>
 		<div id="container">
 			<div class="form">	
 				<form id="search-form" action="/searchcategory" method="POST">
@@ -197,7 +215,7 @@
 			
 					<button type="submit" id="searchCategories">Search Users</button>
 				</form>
-				<h2>Users who posted at least two items in a day:</h2>
+				<h2>Query 2 - Users who posted at least two items in a day:</h2>
 				<table id="users-table">
 					<thead>
 						<tr>
@@ -213,7 +231,7 @@
 				<form id="most-reviews-form" action="/mostReviewsOnDate" method="POST">
 					<button type="submit">Display Users</button>
 				</form>
-				<h2>Users with the most reviews on 2023-09-21:</h2>
+				<h2>Query 4 - Users with the most reviews on 2023-09-21:</h2>
 				<table id="most-reviews-table">
 					<thead>
 						<tr>
@@ -226,7 +244,8 @@
 				</table>
 			</div>
 			<div class="form">
-				<h2>Favorite Sellers</h2>
+				<h2>User Favorites</h2>
+				<br>Favorite a Seller<br>
 				<form id="favorite-sellers-form">
 					<label for="sellerSelect">Select a seller:</label>
 					<select id="sellerSelect" name="seller_id"></select>
@@ -235,7 +254,7 @@
 				<table id="favorite-sellers-table"></table>
 			</div>
 			<div class="form">
-				<h2>Favorite Items</h2>
+				<br>Favorite an Item<br>
 				<form id="favorite-items-form">
 					<label for="itemSelect">Select an item:</label>
 					<select id="itemSelect" name="item_id"></select>
@@ -244,7 +263,7 @@
 				<table id="favorite-items-table"></table>
 			</div>
 			<div class="form" id="commonFavoriteSellers">
-				<h2>Common Favorite Sellers</h2>
+				<h2>Query 5 - Common favorite sellers:</h2>
 				
 				<label for="user1Select">Select first user:</label>
 				<select id="user1Select" name="user1"></select>
@@ -267,7 +286,7 @@
 			</div>
 		</div> <!-- riley end -->
 
-		<hr>java<hr>
+		<hr>Javier<hr>
 		<div id="add-review">
 			<h2>Add a Review:</h2>
 			<form id="review-form">
@@ -295,7 +314,7 @@
 	<!--Query 6 Phase 3-->
 		<div>
 			<h2>
-				Display all the users who never posted any "excellent" items: an item is excellent if at least
+				Query 6 - Display all the users who never posted any "excellent" items: an item is excellent if at least
 				three reviews are excellent.
 			</h2>
 		</div>
@@ -318,7 +337,7 @@
 	<!--Query 9 Phase 3-->
 		<div>
 			<h2>
-				Display those users such that each item they posted so far never received any "poor" reviews.
+				Query 9 - Display those users such that each item they posted so far never received any "poor" reviews.
 			</h2>
 		</div>
 		<button id="NoPoorReviewsBtn">Show No Poor Reviews Table</button>
@@ -332,7 +351,7 @@
 		<div>
 	<!--Query 10 Phase 3-->
 			<h2>
-				List a user pair (A, B) such that they always gave each other "excellent" reviews for every single
+				Query 10 - List a user pair (A, B) such that they always gave each other "excellent" reviews for every single
 				item they posted.
 			</h2>
 			<!--Button for Query 10 Phase 3-->
@@ -515,6 +534,8 @@
 		
 				if (response.ok) {
 					const data = await response.json();
+
+					usersResultBody.innerHTML = "";
 		
 					data.users.forEach(user => {
 						const row = document.createElement("tr");
