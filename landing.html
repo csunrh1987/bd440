@@ -334,15 +334,24 @@
 
 
 
-	<!--Query 9 Phase 3-->
+			<!--Query 9 Phase 3-->
 		<div>
 			<h2>
-				Query 9 - Display those users such that each item they posted so far never received any "poor" reviews.
+				Display those users such that each item they posted so far never received any "poor" reviews.
 			</h2>
 		</div>
 		<button id="NoPoorReviewsBtn">Show No Poor Reviews Table</button>
 		<table id="NoPoorReviewsResult">
+			<thead>
+				<tr>
+					<th>Username</th>
+					<th>Item</th>
+					<th>Rating</th>
+				</tr>
+			</thead>
 			<!-- Table will be populated dynamically -->
+			<tbody id="noPoorReviewsResultBody">
+			</tbody>
 		</table>
 
 
@@ -799,28 +808,39 @@
 
 
 
-		 /*Code for Query 9*/
-                const baseUrl9 = 'http://localhost:3000/NoPoorReviews';
-                const NoPoorBtn = document.getElementById('NoPoorReviewsBtn');
-                const NoPoorReviewsResult = document.getElementById('NoPoorReviewsResult');
+	 /*Code for Query 9*/
+            // Handle the response from the server for Query 9
+            document.getElementById('NoPoorReviewsBtn').addEventListener('click', function () {
+                fetch('/NoPoorReviews', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Get the table body
+                        const tableBody = document.getElementById('noPoorReviewsResultBody');
 
-                NoPoorReviewsBtn.addEventListener('click', excNoPoorReviews);
+                        // Clear existing rows
+                        tableBody.innerHTML = '';
 
-                async function excNoPoorReviews(e) {
-                    e.preventDefault();
-                    const res = await fetch(baseUrl9, {
-                        method: 'GET'
+                        // Populate the table dynamically
+                        data.items.forEach(result => {
+                            const row = tableBody.insertRow();
+                            const usernameCell = row.insertCell(0);
+                            const itemCell = row.insertCell(1);
+                            const ratingCell = row.insertCell(2);
+
+                            usernameCell.textContent = result.username;
+                            itemCell.textContent = result.item;
+                            ratingCell.textContent = result.rating;
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching users with no poor reviews:', error);
                     });
-                    const data9 = await res.json();
-                    console.log(data9);
-                    NoPoorReviewsResult.innerHTML = "";
-
-                    data9.forEach(e => {
-                        const row7 = document.createElement("tr");
-                        row7.innerHTML = `<td>${e.username}</td>`;
-                        NoPoorReviewsResult.appendChild(row7);
-                    });
-                }
+            });
 
 		/*Code for Query 10*/
 			document.getElementById('excellentReviewPairsBtn').addEventListener('click', function () {
