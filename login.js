@@ -80,20 +80,23 @@ app.post('/create', (req, res) => {
 	let username = req.body.username;
 	let password = req.body.password;
 	let email = req.body.email;
+	let fname = req.body.fname;
+	let lname = req.body.lname;
 	let confirm_email = req.body.confirmemail;
+	console.log(fname);
 
 	
 	conn.query('SELECT * FROM registration WHERE username=? OR email=?', [username, email],
 	function(error, results, field){
 		if(error) throw error;
 		if(!results.length){
-			conn.query('INSERT INTO registration (username,password, email) VALUES(?,?,?)', [username, password, email], function (err, result, fields){
+			conn.query('INSERT INTO registration (username, password, firstName, lastName, email) VALUES(?,?,?,?,?)', [username, password, fname, lname, email], function (err, result, fields){
 				if(error) throw error;
 			});
-			res.send("User created");
+			res.send("User created </h1><a href='/signup'>Click to go back</a>");
 		}
 		else{
-			res.send("<h1>User already exists! </h1><a href='/signup'>Click to go back</a>");
+			res.send("<h1>User already exists! </h1><a href='/login'>Click to login</a>");
 			
 		}
 		res.end();
@@ -189,11 +192,17 @@ app.post('/searchcategory', (req, res) => {
 // Handle the review submission
 app.post('/submitreview', (req, res) => {
 	const { item_id, rating, reviewText } = req.body;
-	const username = req.session.username;
+
+	// Check if the user is authenticated
+	if (!req.session.user_id) {
+		return res.status(401).send('User not authenticated.');
+	}
+
+	const reviewer_id = req.session.user_id;
 	const today = makeDate();
 
 	// Check if the user has already submitted three reviews today
-	conn.query('SELECT COUNT(*) AS reviewCount FROM reviews WHERE reviewer = ? AND date = ?', [username, today], (err, result) => {
+	conn.query('SELECT COUNT(*) AS reviewCount FROM reviews WHERE reviewer_id = ? AND date = ?', [reviewer_id, today], (err, result) => {
 		if (err) {
 			return res.status(500).send(err);
 		}
@@ -214,13 +223,13 @@ app.post('/submitreview', (req, res) => {
 			const itemData = JSON.parse(JSON.stringify(result));
 			const itemOwner = itemData[0].user_id;
 
-			if (itemOwner === username) {
+			if (itemOwner === reviewer_id) {
 				return res.status(403).send("You can't review your own item.");
 			}
 
 			// Insert the review into the database
-			const sql = 'INSERT INTO reviews (item_id, rating, review_text, reviewer, date) VALUES (?, ?, ?, ?, ?)';
-			conn.query(sql, [item_id, rating, reviewText, username, today], (err, result) => {
+			const sql = 'INSERT INTO reviews (item_id, rating, review_text, reviewer_id, date) VALUES (?, ?, ?, ?, ?)';
+			conn.query(sql, [item_id, rating, reviewText, reviewer_id, today], (err, result) => {
 				if (err) {
 					return res.status(500).send(err);
 				}
@@ -233,7 +242,7 @@ app.post('/submitreview', (req, res) => {
 
 // Creating a review table
 app.post('/createReviewTable', (req, res) => {
-	const sql = 'CREATE TABLE IF NOT EXISTS reviews (id INT AUTO_INCREMENT PRIMARY KEY, item_id INT, rating INT, review_text TEXT, reviewer VARCHAR(255), date DATE)';
+	const sql = 'CREATE TABLE IF NOT EXISTS reviews (id INT AUTO_INCREMENT PRIMARY KEY, item_id INT, rating VARCHAR(20), review_text TEXT, reviewer_id INT, date DATE)';
 	conn.query(sql, (err, result) => {
 		if (err) {
 			console.error('Error occurred while creating table:', err);
@@ -439,6 +448,40 @@ app.post('/getCommonFavoriteSellers', (req, res) => {
     });
 });
 
+
+// Query 6 phase 3
+app.get('/nonExcellentUsers', (req, res) => {
+	const sql = `
+        SELECT DISTINCT r.username
+        FROM registration r
+        WHERE r.username NOT IN (
+            SELECT DISTINCT r.username
+            FROM reviews rev
+            JOIN useritem u ON rev.item_id = u.item_id
+            JOIN registration r ON u.user_id = r.id
+            WHERE rev.review_text = 'Excellent'
+            GROUP BY r.username, u.item_id
+            HAVING COUNT(DISTINCT rev.reviewer_id) >= 3
+        )
+    `;
+
+	conn.query(sql, (error, results) => {
+		if (error) {
+			console.error('Error fetching users with no excellent items:', error);
+			res.status(500).json({ error: 'Internal Server Error' });
+		} else {
+			const users = results.map(result => result.username);
+			res.json({ users });
+		}
+	});
+});
+
+
+
+
+
+
+
 //query 7 phase3
 app.get('/nopoor', (req, res) =>{
 	const sql = 'SELECT DISTINCT G.username FROM registration G, reviews R WHERE G.id = R.reviewer_id AND R.reviewer_id NOT IN (SELECT reviewer_id FROM reviews WHERE review_text = ?)'
@@ -466,6 +509,65 @@ app.get('/allpoor', (req, res) =>{
 		})
 			
 });
+
+//query 9 phase 3
+app.get('/NoPoorReviews', (req, res) => {
+	const sql = `
+		SELECT DISTINCT G.username, R.review_text, G.id 
+		FROM registration G
+		LEFT JOIN reviews R ON G.id = R.reviewer_id
+		WHERE G.id NOT IN (
+			SELECT R.reviewer_id 
+			FROM reviews R 
+			WHERE R.review_text = 'Poor'
+		) OR R.review_text IS NULL;
+	`;
+
+	conn.query(sql, function (err, result) {
+		if (err) throw err;
+
+		const items = result.map(result => ({
+			username: result.username,
+		}));
+
+		console.log(items);
+		res.send(items);
+	});
+});
+
+
+//Query 10 Phase 3
+// Query for Excellent Review Pairs
+app.get('/excellentReviewPairs', (req, res) => {
+    const sql = `
+        SELECT DISTINCT userA, userB
+        FROM (
+            SELECT R1.reviewer_id AS userA, R2.reviewer_id AS userB
+            FROM reviews R1
+            JOIN reviews R2 ON R1.item_id = R2.item_id
+            WHERE R1.review_text = 'Excellent' AND R2.review_text = 'Excellent'
+            GROUP BY R1.reviewer_id, R2.reviewer_id
+            HAVING COUNT(R1.item_id) = (SELECT COUNT(DISTINCT item_id) FROM reviews WHERE reviewer_id = R1.reviewer_id)
+        ) AS excellentReviewPairs
+    `;
+
+    conn.query(sql, (error, results) => {
+        if (error) {
+            console.error('Error fetching excellent review pairs:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            const pairs = results.map(result => ({
+                userA: result.userA,
+                userB: result.userB,
+            }));
+            res.json({ pairs });
+        }
+    });
+});
+
+
+
+
 
 app.listen(port);
 

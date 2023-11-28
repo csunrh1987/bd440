@@ -292,7 +292,67 @@
 				<br>
 				<button type="button" id="submitReview">Submit Review</button>
 			</form>
+	<!--Query 6 Phase 3-->
+		<div>
+			<h2>
+				Display all the users who never posted any "excellent" items: an item is excellent if at least
+				three reviews are excellent.
+			</h2>
 		</div>
+		<!--Button for Query 6 Phase 3-->
+		<button id="showNonExcellentUsers">Show Users with No Excellent Items</button>
+		<table id="nonExcellentUsersResult">
+			<!-- Table headers -->
+			<thead>
+				<tr>
+					<th>Username</th>
+				</tr>
+			</thead>
+			<!-- Table body (will be populated dynamically) -->
+			<tbody>
+			</tbody>
+		</table>
+
+
+
+	<!--Query 9 Phase 3-->
+		<div>
+			<h2>
+				Display those users such that each item they posted so far never received any "poor" reviews.
+			</h2>
+		</div>
+		<button id="NoPoorReviewsBtn">Show No Poor Reviews Table</button>
+		<table id="NoPoorReviewsResult">
+			<!-- Table will be populated dynamically -->
+		</table>
+
+
+
+
+		<div>
+	<!--Query 10 Phase 3-->
+			<h2>
+				List a user pair (A, B) such that they always gave each other "excellent" reviews for every single
+				item they posted.
+			</h2>
+			<!--Button for Query 10 Phase 3-->
+			<button id="excellentReviewPairsBtn" type="button">Show Excellent Review Pairs</button>
+
+			<table id="excellentReviewPairsResult">
+				<!-- Table headers -->
+				<thead>
+					<tr>
+						<th>User A</th>
+						<th>User B</th>
+					</tr>
+				</thead>
+				<!-- Table body (will be populated dynamically) -->
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	<!--Javier End -->
+		
 		<hr>
 		<h2>Create table button</h2>
 			<form action="/createtable" method="post">
@@ -303,42 +363,43 @@
 
 		<!--Script to handle review calls when submit button is pressed-->
 		<script>
-			document.getElementById('submitReview').addEventListener('click', function () {
+		document.getElementById('submitReview').addEventListener('click', function () {
 			const item_id = document.getElementById('itemSelect').value;
-		    const rating = document.getElementById('ratingSelect').value;
-		    const reviewText = document.getElementById('reviewText').value;
-		
-		    const data = { item_id, rating, reviewText };
-		
-		    fetch('/submitreview', {
+			const rating = document.getElementById('ratingSelect').value;
+			const reviewText = document.getElementById('reviewText').value;
+
+			const data = { item_id, rating, reviewText };
+
+			fetch('/submitreview', {
 				method: 'POST',
 				headers: {
-		        'Content-Type': 'application/json',
-		      },
-		      body: JSON.stringify(data),
-		    })
-		    .then(response => {
-		      if (response.ok) {
-		        console.log('Review submitted successfully');
-		        alert('Review submitted successfully');
-		        document.getElementById('reviewText').value = ''; // Clear the review text area
-		      } else if (response.status === 403) {
-		        console.log('You have already submitted three reviews today.');
-		        alert('You have already submitted three reviews today.');
-		      } else {
-		        response.text().then(errorMessage => {
-		          console.log('Error:', errorMessage);
-		          alert('error: ' + errorMessage);
-		        });
-		      }
-		    })
-		    .catch(error => {
-		      console.error('Error:', error);
-		      alert('An error occurred. Please try again.');
-		    });
-		  });
-		
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(data),
+			})
+				.then(response => {
+					if (response.ok) {
+						console.log('Review submitted successfully');
+						alert('Review submitted successfully');
+						document.getElementById('reviewText').value = ''; // Clear the review text area
+					} else if (response.status === 403) {
+						console.log('You have already submitted three reviews today.');
+						alert('You have already submitted three reviews today.');
+					} else {
+						response.text().then(errorMessage => {
+							console.log('Error:', errorMessage);
+							alert('Error: ' + errorMessage);
+						});
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert('An error occurred. Please try again.');
+				});
+			});
 
+
+	
 			/*code for Query 1*/
 			const baseUrl = 'http://localhost:3000/maxcat';
 			const maxBtn = document.getElementById('maxbutton');
@@ -364,6 +425,8 @@
 					maxresult.appendChild(row0);	
 				})
 			}
+
+			
 				
 			/*Code for query 2*/
 			const searchCategoriesForm = document.getElementById("search-categories-form");
@@ -602,6 +665,38 @@
 					getCommonFavoriteSellers(user1, user2);
 				});
 			});
+
+				//Code for Query 6
+				document.getElementById('showNonExcellentUsers').addEventListener('click', function () {
+					fetch('/nonExcellentUsers', {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+					})
+						.then(response => response.json())
+						.then(data => {
+							// Get the table body
+							const tableBody = document.getElementById('nonExcellentUsersResult').getElementsByTagName('tbody')[0];
+
+							// Clear existing rows
+							tableBody.innerHTML = '';
+
+							// Populate the table dynamically
+							data.users.forEach(username => {
+								const row = tableBody.insertRow();
+								const cell = row.insertCell(0);
+								cell.textContent = username;
+							});
+						})
+						.catch(error => {
+							console.error('Error fetching non-excellent users:', error);
+						});
+				});
+			
+
+
+			
 			
 			/*code for Query 7*/
 			const baseUrl7 = 'http://localhost:3000/nopoor';
@@ -679,6 +774,66 @@
 				});
 			}
 		});
+
+
+
+
+		 /*Code for Query 9*/
+                const baseUrl9 = 'http://localhost:3000/NoPoorReviews';
+                const NoPoorBtn = document.getElementById('NoPoorReviewsBtn');
+                const NoPoorReviewsResult = document.getElementById('NoPoorReviewsResult');
+
+                NoPoorReviewsBtn.addEventListener('click', excNoPoorReviews);
+
+                async function excNoPoorReviews(e) {
+                    e.preventDefault();
+                    const res = await fetch(baseUrl9, {
+                        method: 'GET'
+                    });
+                    const data9 = await res.json();
+                    console.log(data9);
+                    NoPoorReviewsResult.innerHTML = "";
+
+                    data9.forEach(e => {
+                        const row7 = document.createElement("tr");
+                        row7.innerHTML = `<td>${e.username}</td>`;
+                        NoPoorReviewsResult.appendChild(row7);
+                    });
+                }
+
+		/*Code for Query 10*/
+			document.getElementById('excellentReviewPairsBtn').addEventListener('click', function () {
+				fetch('/excellentReviewPairs', {
+					method: 'GET',
+					headers: {
+							'Content-Type': 'application/json'
+						},
+					})
+						.then(response => response.json())
+						.then(data => {
+							// Get the table body
+							const tableBody = document.getElementById('excellentReviewPairsResult').getElementsByTagName('tbody')[0];
+
+							// Clear existing rows
+							tableBody.innerHTML = '';
+
+							// Populate the table dynamically
+							data.pairs.forEach(pair => {
+								const row = tableBody.insertRow();
+								const cellA = row.insertCell(0);
+								const cellB = row.insertCell(1);
+								cellA.textContent = pair.userA;
+								cellB.textContent = pair.userB;
+							});
+						})
+						.catch(error => {
+							console.error('Error fetching excellent review pairs:', error);
+						});
+				});
+
+		
+
+			
 		</script>
 	
 	</body>
