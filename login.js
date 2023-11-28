@@ -123,7 +123,7 @@ app.post('/auth', (req, res) => {
 				res.redirect('/landing');
 			}
 			else{
-				res.send("wrong.");
+				res.send("<h1>Username or password is wrong.</h1><a href='/login'>Click to go back</a>");
 			}
 			res.end();
 		});
