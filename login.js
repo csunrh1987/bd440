@@ -510,10 +510,9 @@ app.get('/allpoor', (req, res) =>{
 			
 });
 
-//query 9 phase 3
 app.get('/NoPoorReviews', (req, res) => {
 	const sql = `
-		SELECT DISTINCT G.username, R.rating, G.id 
+		SELECT G.username, R.item_id AS item, R.rating
 		FROM registration G
 		LEFT JOIN reviews R ON G.id = R.reviewer_id
 		WHERE G.id NOT IN (
@@ -528,11 +527,12 @@ app.get('/NoPoorReviews', (req, res) => {
 
 		const items = result.map(result => ({
 			username: result.username,
+			item: result.item,
 			rating: result.rating,
 		}));
 
 		console.log(items);
-		res.send(items);
+		res.send({ items });
 	});
 });
 
