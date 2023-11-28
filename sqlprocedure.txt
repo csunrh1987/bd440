@@ -33,7 +33,7 @@ END
 CREATE TABLE IF NOT EXISTS reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
     item_id INT,
-    rating INT,
+    rating VARCHAR,
     review_text TEXT,
     reviewer_id INT,
     date DATE,
