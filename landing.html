@@ -588,7 +588,7 @@
 				if (response.ok) {
 					const data = await response.json();
 
-					usersResultBody.innerHTML = "";
+					mostReviewsResultBody.innerHTML = "";
 		
 					data.users.forEach(user => {
 						const row = document.createElement("tr");
