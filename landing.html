@@ -391,40 +391,79 @@
 
 		<!--Script to handle review calls when submit button is pressed-->
 		<script>
-		document.getElementById('submitReview').addEventListener('click', function () {
-			const item_id = document.getElementById('itemSelect').value;
-			const rating = document.getElementById('ratingSelect').value;
-			const reviewText = document.getElementById('reviewText').value;
+		 // Function to populate items dropdown
+            function populateItemsDropdown() {
+                fetch('/items') // endpoint to retrieve items
+                    .then(response => response.json())
+                    .then(data => {
+                        const addReviewSelect = document.getElementById('addReviewSelect');
 
-			const data = { item_id, rating, reviewText };
+                        // Clear existing options
+                        addReviewSelect.innerHTML = '<option value="" disabled selected>Select an item</option>';
 
-			fetch('/submitreview', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(data),
-			})
-				.then(response => {
-					if (response.ok) {
-						console.log('Review submitted successfully');
-						alert('Review submitted successfully');
-						document.getElementById('reviewText').value = ''; // Clear the review text area
-					} else if (response.status === 403) {
-						console.log('You have already submitted three reviews today.');
-						alert('You have already submitted three reviews today.');
-					} else {
-						response.text().then(errorMessage => {
-							console.log('Error:', errorMessage);
-							alert('Error: ' + errorMessage);
-						});
-					}
-				})
-				.catch(error => {
-					console.error('Error:', error);
-					alert('An error occurred. Please try again.');
-				});
-			});
+                        // Populate the dropdown with retrieved items
+                        data.forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item.id;
+                            option.textContent = item.name;
+                            addReviewSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching items:', error);
+                    });
+            }
+
+            // Event listener for page load
+            document.addEventListener('DOMContentLoaded', function () {
+                // Populate items dropdown on page load
+                populateItemsDropdown();
+
+                // Event listener for submitting reviews
+                document.getElementById('submitReview').addEventListener('click', function () {
+                    const item_id = document.getElementById('addReviewSelect').value;
+                    const rating = document.getElementById('ratingSelect').value;
+                    const reviewText = document.getElementById('reviewText').value;
+
+                    // Check if an item is selected
+                    if (!item_id) {
+                        alert('Please select an item before submitting a review.');
+                        return;
+                    }
+
+                    const data = { item_id, rating, reviewText };
+
+                    fetch('/submitreview', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('Review submitted successfully');
+                                alert('Review submitted successfully');
+                                document.getElementById('reviewText').value = ''; // Clear the review text area
+
+                                // Repopulate the items dropdown after submitting a review
+                                populateItemsDropdown();
+                            } else if (response.status === 403) {
+                                console.log('You have already submitted three reviews today.');
+                                alert('You have already submitted three reviews today.');
+                            } else {
+                                response.text().then(errorMessage => {
+                                    console.log('Error:', errorMessage);
+                                    alert('Error: ' + errorMessage);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred. Please try again.');
+                        });
+                });
+            });
 
 
 	
