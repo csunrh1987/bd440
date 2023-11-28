@@ -191,7 +191,7 @@ app.post('/searchcategory', (req, res) => {
 
 // Handle the review submission
 app.post('/submitreview', (req, res) => {
-	console.log('Session user_id:', req.session.user_id); // Add this line
+	console.log('Session user_id:', req.session.user_id); 
 	// Check if the user is authenticated
 	if (!req.session.username) {
 		return res.status(401).send('Unauthorized. Please log in.');
