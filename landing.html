@@ -15,6 +15,7 @@
 			}
 
 			h2{
+				font-size: 23px;
 				text-align: left;
 				margin-bottom: 15px;
 			}
@@ -61,6 +62,23 @@
 			}
 			th{
 				background-color: lightblue;
+			}
+			select{
+				width: 200px;
+				padding: 8px;
+				font-size: 15px;
+				border: 1px solid gray;
+				border-radius: 4px;
+				background-color: white;
+				color: #333;
+				font-family:inherit;
+			}
+			option{
+				font-family: inherit;
+			}
+			select:focus{
+				outline:none;
+				border-color: black;
 			}
         </style>
 		<title>Welcome</title>
@@ -164,7 +182,7 @@
 			</form>
 		</div>
 
-		<hr>riley<hr>
+		<hr>Riley<hr>
 		<div id="container">
 			<div class="form">	
 				<form id="search-form" action="/searchcategory" method="POST">
@@ -197,7 +215,7 @@
 			
 					<button type="submit" id="searchCategories">Search Users</button>
 				</form>
-				<h2>Users who posted at least two items in a day:</h2>
+				<h2>Query 2 - Users who posted at least two items in a day:</h2>
 				<table id="users-table">
 					<thead>
 						<tr>
@@ -213,7 +231,7 @@
 				<form id="most-reviews-form" action="/mostReviewsOnDate" method="POST">
 					<button type="submit">Display Users</button>
 				</form>
-				<h2>Users with the most reviews on 2023-09-21:</h2>
+				<h2>Query 4 - Users with the most reviews on 2023-09-21:</h2>
 				<table id="most-reviews-table">
 					<thead>
 						<tr>
@@ -226,7 +244,8 @@
 				</table>
 			</div>
 			<div class="form">
-				<h2>Favorite Sellers</h2>
+				<h2>User Favorites</h2>
+				<br>Favorite a Seller<br>
 				<form id="favorite-sellers-form">
 					<label for="sellerSelect">Select a seller:</label>
 					<select id="sellerSelect" name="seller_id"></select>
@@ -235,7 +254,7 @@
 				<table id="favorite-sellers-table"></table>
 			</div>
 			<div class="form">
-				<h2>Favorite Items</h2>
+				<br>Favorite an Item<br>
 				<form id="favorite-items-form">
 					<label for="itemSelect">Select an item:</label>
 					<select id="itemSelect" name="item_id"></select>
@@ -244,7 +263,7 @@
 				<table id="favorite-items-table"></table>
 			</div>
 			<div class="form" id="commonFavoriteSellers">
-				<h2>Common Favorite Sellers</h2>
+				<h2>Query 5 - Common favorite sellers:</h2>
 				
 				<label for="user1Select">Select first user:</label>
 				<select id="user1Select" name="user1"></select>
@@ -267,17 +286,17 @@
 			</div>
 		</div> <!-- riley end -->
 
-		<hr>java<hr>
+		<!-- Javier HTML START -->
+		<hr>Javier<hr>
 		<div id="add-review">
 			<h2>Add a Review:</h2>
 			<form id="review-form">
-				<label for="itemSelect">Select an item:</label>
-				<select id="itemSelect" name="item_id">
-					
-					<option value="1">Test Item 1</option> <!-- Replace "1" with the actual item ID -->
-					<option value="2">Test Item 2</option> <!-- Replace "2" with the actual item ID -->
-					<!-- Add more items with their respective IDs -->
+				<label for="addReviewSelect">Select an item:</label>
+				<select id="addReviewSelect" name="item_id">
+					<!-- Placeholder option -->
+					<option value="" disabled selected>Select an item</option>
 				</select>
+
 				<br>
 				<label for="ratingSelect">Select a rating:</label>
 				<select id="ratingSelect" name="rating">
@@ -292,10 +311,15 @@
 				<br>
 				<button type="button" id="submitReview">Submit Review</button>
 			</form>
+		</div>
+
+
+
+		
 	<!--Query 6 Phase 3-->
 		<div>
 			<h2>
-				Display all the users who never posted any "excellent" items: an item is excellent if at least
+				Query 6 - Display all the users who never posted any "excellent" items: an item is excellent if at least
 				three reviews are excellent.
 			</h2>
 		</div>
@@ -315,7 +339,7 @@
 
 
 
-	<!--Query 9 Phase 3-->
+			<!--Query 9 Phase 3-->
 		<div>
 			<h2>
 				Display those users such that each item they posted so far never received any "poor" reviews.
@@ -323,7 +347,16 @@
 		</div>
 		<button id="NoPoorReviewsBtn">Show No Poor Reviews Table</button>
 		<table id="NoPoorReviewsResult">
+			<thead>
+				<tr>
+					<th>Username</th>
+					<th>Item</th>
+					<th>Rating</th>
+				</tr>
+			</thead>
 			<!-- Table will be populated dynamically -->
+			<tbody id="noPoorReviewsResultBody">
+			</tbody>
 		</table>
 
 
@@ -332,7 +365,7 @@
 		<div>
 	<!--Query 10 Phase 3-->
 			<h2>
-				List a user pair (A, B) such that they always gave each other "excellent" reviews for every single
+				Query 10 - List a user pair (A, B) such that they always gave each other "excellent" reviews for every single
 				item they posted.
 			</h2>
 			<!--Button for Query 10 Phase 3-->
@@ -363,40 +396,79 @@
 
 		<!--Script to handle review calls when submit button is pressed-->
 		<script>
-		document.getElementById('submitReview').addEventListener('click', function () {
-			const item_id = document.getElementById('itemSelect').value;
-			const rating = document.getElementById('ratingSelect').value;
-			const reviewText = document.getElementById('reviewText').value;
+		 // Function to populate items dropdown
+            function populateItemsDropdown() {
+                fetch('/items') // endpoint to retrieve items
+                    .then(response => response.json())
+                    .then(data => {
+                        const addReviewSelect = document.getElementById('addReviewSelect');
 
-			const data = { item_id, rating, reviewText };
+                        // Clear existing options
+                        addReviewSelect.innerHTML = '<option value="" disabled selected>Select an item</option>';
 
-			fetch('/submitreview', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(data),
-			})
-				.then(response => {
-					if (response.ok) {
-						console.log('Review submitted successfully');
-						alert('Review submitted successfully');
-						document.getElementById('reviewText').value = ''; // Clear the review text area
-					} else if (response.status === 403) {
-						console.log('You have already submitted three reviews today.');
-						alert('You have already submitted three reviews today.');
-					} else {
-						response.text().then(errorMessage => {
-							console.log('Error:', errorMessage);
-							alert('Error: ' + errorMessage);
-						});
-					}
-				})
-				.catch(error => {
-					console.error('Error:', error);
-					alert('An error occurred. Please try again.');
-				});
-			});
+                        // Populate the dropdown with retrieved items
+                        data.forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item.id;
+                            option.textContent = item.name;
+                            addReviewSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching items:', error);
+                    });
+            }
+
+            // Event listener for page load
+            document.addEventListener('DOMContentLoaded', function () {
+                // Populate items dropdown on page load
+                populateItemsDropdown();
+
+                // Event listener for submitting reviews
+                document.getElementById('submitReview').addEventListener('click', function () {
+                    const item_id = document.getElementById('addReviewSelect').value;
+                    const rating = document.getElementById('ratingSelect').value;
+                    const reviewText = document.getElementById('reviewText').value;
+
+                    // Check if an item is selected
+                    if (!item_id) {
+                        alert('Please select an item before submitting a review.');
+                        return;
+                    }
+
+                    const data = { item_id, rating, reviewText };
+
+                    fetch('/submitreview', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('Review submitted successfully');
+                                alert('Review submitted successfully');
+                                document.getElementById('reviewText').value = ''; // Clear the review text area
+
+                                // Repopulate the items dropdown after submitting a review
+                                populateItemsDropdown();
+                            } else if (response.status === 403) {
+                                console.log('You have already submitted three reviews today.');
+                                alert('You have already submitted three reviews today.');
+                            } else {
+                                response.text().then(errorMessage => {
+                                    console.log('Error:', errorMessage);
+                                    alert('Error: ' + errorMessage);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred. Please try again.');
+                        });
+                });
+            });
 
 
 	
@@ -515,6 +587,8 @@
 		
 				if (response.ok) {
 					const data = await response.json();
+
+					mostReviewsResultBody.innerHTML = "";
 		
 					data.users.forEach(user => {
 						const row = document.createElement("tr");
@@ -778,28 +852,38 @@
 
 
 
-		 /*Code for Query 9*/
-                const baseUrl9 = 'http://localhost:3000/NoPoorReviews';
-                const NoPoorBtn = document.getElementById('NoPoorReviewsBtn');
-                const NoPoorReviewsResult = document.getElementById('NoPoorReviewsResult');
+			/*Code for Query 9*/
+            document.getElementById('NoPoorReviewsBtn').addEventListener('click', function () {
+                fetch('/NoPoorReviews', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Get the table body
+                        const tableBody = document.getElementById('noPoorReviewsResultBody');
 
-                NoPoorReviewsBtn.addEventListener('click', excNoPoorReviews);
+                        // Clear existing rows
+                        tableBody.innerHTML = '';
 
-                async function excNoPoorReviews(e) {
-                    e.preventDefault();
-                    const res = await fetch(baseUrl9, {
-                        method: 'GET'
+                        // Populate the table dynamically
+                        data.items.forEach(result => {
+                            const row = tableBody.insertRow();
+                            const usernameCell = row.insertCell(0);
+                            const itemCell = row.insertCell(1);
+                            const ratingCell = row.insertCell(2);
+
+                            usernameCell.textContent = result.username;
+                            itemCell.textContent = result.item;
+                            ratingCell.textContent = result.rating;
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching users with no poor reviews:', error);
                     });
-                    const data9 = await res.json();
-                    console.log(data9);
-                    NoPoorReviewsResult.innerHTML = "";
-
-                    data9.forEach(e => {
-                        const row7 = document.createElement("tr");
-                        row7.innerHTML = `<td>${e.username}</td>`;
-                        NoPoorReviewsResult.appendChild(row7);
-                    });
-                }
+            });
 
 		/*Code for Query 10*/
 			document.getElementById('excellentReviewPairsBtn').addEventListener('click', function () {

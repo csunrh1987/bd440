@@ -163,7 +163,7 @@ app.post('/additem', (req, res) => {
 	});
 });
 
-//creating a table
+//creating an item table
 app.post('/createtable', (req, res)=> {
 	let currentdate = makeDate();
 	var sql = 'CALL CreateTable(?)'
@@ -191,13 +191,13 @@ app.post('/searchcategory', (req, res) => {
 
 // Handle the review submission
 app.post('/submitreview', (req, res) => {
-	const { item_id, rating, reviewText } = req.body;
-
+	console.log('Session user_id:', req.session.user_id); 
 	// Check if the user is authenticated
-	if (!req.session.user_id) {
-		return res.status(401).send('User not authenticated.');
+	if (!req.session.username) {
+		return res.status(401).send('Unauthorized. Please log in.');
 	}
 
+	const { item_id, rating, reviewText } = req.body;
 	const reviewer_id = req.session.user_id;
 	const today = makeDate();
 
@@ -299,7 +299,7 @@ app.post('/excellentitems', (req,res) => {
 	const myuser = req.body.user;
 	
 	const sql = 
-		'SELECT DISTINCT r.username, r1.item_id, u.title FROM reviews r1 JOIN useritem u ON r1.item_id = u.item_id JOIN registration r ON u.user_id = r.id WHERE r.username = ? AND (r1.review_text = ? OR r1.review_text = ?) AND NOT EXISTS (SELECT 1 FROM reviews r2 WHERE r1.item_id = r2.item_id AND r2.review_text NOT IN(?,?))'
+		'SELECT DISTINCT r.username, r1.item_id, u.title FROM reviews r1 JOIN useritem u ON r1.item_id = u.item_id JOIN registration r ON u.user_id = r.id WHERE r.username = ? AND (r1.rating = ? OR r1.rating = ?) AND NOT EXISTS (SELECT 1 FROM reviews r2 WHERE r1.item_id = r2.item_id AND r2.rating NOT IN(?,?))'
 	
 	conn.query(sql, [myuser, "Excellent", "Good", "Excellent", "Good"], function (err, result) {
 		if (err) throw err;
@@ -311,6 +311,7 @@ app.post('/excellentitems', (req,res) => {
 		res.send(items);
 	});
 });
+
 
 //Query 4 phase 3
 app.post('/mostReviewsOnDate', (req, res) => {
@@ -459,7 +460,7 @@ app.get('/nonExcellentUsers', (req, res) => {
             FROM reviews rev
             JOIN useritem u ON rev.item_id = u.item_id
             JOIN registration r ON u.user_id = r.id
-            WHERE rev.review_text = 'Excellent'
+            WHERE rev.rating = 'Excellent'
             GROUP BY r.username, u.item_id
             HAVING COUNT(DISTINCT rev.reviewer_id) >= 3
         )
@@ -481,10 +482,9 @@ app.get('/nonExcellentUsers', (req, res) => {
 
 
 
-
 //query 7 phase3
 app.get('/nopoor', (req, res) =>{
-	const sql = 'SELECT DISTINCT G.username FROM registration G, reviews R WHERE G.id = R.reviewer_id AND R.reviewer_id NOT IN (SELECT reviewer_id FROM reviews WHERE review_text = ?)'
+	const sql = 'SELECT DISTINCT G.username FROM registration G, reviews R WHERE G.id = R.reviewer_id AND R.reviewer_id NOT IN (SELECT reviewer_id FROM reviews WHERE rating = ?)'
 	conn.query(sql, ["Poor"], function (err, result) {
 		if (err) throw err;
 		const items = result.map(result => ({
@@ -498,7 +498,7 @@ app.get('/nopoor', (req, res) =>{
 
 //query 8 phase3
 app.get('/allpoor', (req, res) =>{
-		const sql = 'SELECT DISTINCT G.username, R.review_text, G.id FROM registration G, reviews R WHERE G.id = R.reviewer_id AND G.id NOT IN (SELECT R.reviewer_id FROM reviews R WHERE R.review_text NOT IN (?))'
+		const sql = 'SELECT DISTINCT G.username, R.rating, G.id FROM registration G, reviews R WHERE G.id = R.reviewer_id AND G.id NOT IN (SELECT R.reviewer_id FROM reviews R WHERE R.rating NOT IN (?))'
 		conn.query(sql, ["Poor"], function (err, result) {
 		if (err) throw err;
 		const items = result.map(result => ({
@@ -510,17 +510,16 @@ app.get('/allpoor', (req, res) =>{
 			
 });
 
-//query 9 phase 3
 app.get('/NoPoorReviews', (req, res) => {
 	const sql = `
-		SELECT DISTINCT G.username, R.review_text, G.id 
+		SELECT G.username, R.item_id AS item, R.rating
 		FROM registration G
 		LEFT JOIN reviews R ON G.id = R.reviewer_id
 		WHERE G.id NOT IN (
 			SELECT R.reviewer_id 
 			FROM reviews R 
-			WHERE R.review_text = 'Poor'
-		) OR R.review_text IS NULL;
+			WHERE R.rating = 'Poor'
+		) OR R.rating IS NULL;
 	`;
 
 	conn.query(sql, function (err, result) {
@@ -528,41 +527,45 @@ app.get('/NoPoorReviews', (req, res) => {
 
 		const items = result.map(result => ({
 			username: result.username,
+			item: result.item,
+			rating: result.rating,
 		}));
 
 		console.log(items);
-		res.send(items);
+		res.send({ items });
 	});
 });
 
 
 //Query 10 Phase 3
 // Query for Excellent Review Pairs
+//Query 10 Phase 3
+// Query for Excellent Review Pairs
 app.get('/excellentReviewPairs', (req, res) => {
-    const sql = `
+	const sql = `
         SELECT DISTINCT userA, userB
         FROM (
             SELECT R1.reviewer_id AS userA, R2.reviewer_id AS userB
             FROM reviews R1
             JOIN reviews R2 ON R1.item_id = R2.item_id
-            WHERE R1.review_text = 'Excellent' AND R2.review_text = 'Excellent'
+            WHERE R1.rating = 'Excellent' AND R2.rating = 'Excellent'
             GROUP BY R1.reviewer_id, R2.reviewer_id
             HAVING COUNT(R1.item_id) = (SELECT COUNT(DISTINCT item_id) FROM reviews WHERE reviewer_id = R1.reviewer_id)
         ) AS excellentReviewPairs
     `;
 
-    conn.query(sql, (error, results) => {
-        if (error) {
-            console.error('Error fetching excellent review pairs:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        } else {
-            const pairs = results.map(result => ({
-                userA: result.userA,
-                userB: result.userB,
-            }));
-            res.json({ pairs });
-        }
-    });
+	conn.query(sql, (error, results) => {
+		if (error) {
+			console.error('Error fetching excellent review pairs:', error);
+			res.status(500).json({ error: 'Internal Server Error' });
+		} else {
+			const pairs = results.map(result => ({
+				userA: result.userA,
+				userB: result.userB,
+			}));
+			res.json({ pairs });
+		}
+	});
 });
 
 
