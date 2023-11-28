@@ -191,13 +191,13 @@ app.post('/searchcategory', (req, res) => {
 
 // Handle the review submission
 app.post('/submitreview', (req, res) => {
-	const { item_id, rating, reviewText } = req.body;
-
+	console.log('Session user_id:', req.session.user_id); // Add this line
 	// Check if the user is authenticated
-	if (!req.session.user_id) {
-		return res.status(401).send('User not authenticated.');
+	if (!req.session.username) {
+		return res.status(401).send('Unauthorized. Please log in.');
 	}
 
+	const { item_id, rating, reviewText } = req.body;
 	const reviewer_id = req.session.user_id;
 	const today = makeDate();
 
