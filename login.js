@@ -459,7 +459,7 @@ app.get('/nonExcellentUsers', (req, res) => {
             FROM reviews rev
             JOIN useritem u ON rev.item_id = u.item_id
             JOIN registration r ON u.user_id = r.id
-            WHERE rev.review_text = 'Excellent'
+            WHERE rev.rating = 'Excellent'
             GROUP BY r.username, u.item_id
             HAVING COUNT(DISTINCT rev.reviewer_id) >= 3
         )
