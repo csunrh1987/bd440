@@ -163,7 +163,7 @@ app.post('/additem', (req, res) => {
 	});
 });
 
-//creating a table
+//creating an item table
 app.post('/createtable', (req, res)=> {
 	let currentdate = makeDate();
 	var sql = 'CALL CreateTable(?)'
@@ -299,7 +299,7 @@ app.post('/excellentitems', (req,res) => {
 	const myuser = req.body.user;
 	
 	const sql = 
-		'SELECT DISTINCT r.username, r1.item_id, u.title FROM reviews r1 JOIN useritem u ON r1.item_id = u.item_id JOIN registration r ON u.user_id = r.id WHERE r.username = ? AND (r1.review_text = ? OR r1.review_text = ?) AND NOT EXISTS (SELECT 1 FROM reviews r2 WHERE r1.item_id = r2.item_id AND r2.review_text NOT IN(?,?))'
+		'SELECT DISTINCT r.username, r1.item_id, u.title FROM reviews r1 JOIN useritem u ON r1.item_id = u.item_id JOIN registration r ON u.user_id = r.id WHERE r.username = ? AND (r1.rating = ? OR r1.rating = ?) AND NOT EXISTS (SELECT 1 FROM reviews r2 WHERE r1.item_id = r2.item_id AND r2.rating NOT IN(?,?))'
 	
 	conn.query(sql, [myuser, "Excellent", "Good", "Excellent", "Good"], function (err, result) {
 		if (err) throw err;
@@ -311,6 +311,7 @@ app.post('/excellentitems', (req,res) => {
 		res.send(items);
 	});
 });
+
 
 //Query 4 phase 3
 app.post('/mostReviewsOnDate', (req, res) => {
@@ -481,10 +482,9 @@ app.get('/nonExcellentUsers', (req, res) => {
 
 
 
-
 //query 7 phase3
 app.get('/nopoor', (req, res) =>{
-	const sql = 'SELECT DISTINCT G.username FROM registration G, reviews R WHERE G.id = R.reviewer_id AND R.reviewer_id NOT IN (SELECT reviewer_id FROM reviews WHERE review_text = ?)'
+	const sql = 'SELECT DISTINCT G.username FROM registration G, reviews R WHERE G.id = R.reviewer_id AND R.reviewer_id NOT IN (SELECT reviewer_id FROM reviews WHERE rating = ?)'
 	conn.query(sql, ["Poor"], function (err, result) {
 		if (err) throw err;
 		const items = result.map(result => ({
@@ -498,7 +498,7 @@ app.get('/nopoor', (req, res) =>{
 
 //query 8 phase3
 app.get('/allpoor', (req, res) =>{
-		const sql = 'SELECT DISTINCT G.username, R.review_text, G.id FROM registration G, reviews R WHERE G.id = R.reviewer_id AND G.id NOT IN (SELECT R.reviewer_id FROM reviews R WHERE R.review_text NOT IN (?))'
+		const sql = 'SELECT DISTINCT G.username, R.rating, G.id FROM registration G, reviews R WHERE G.id = R.reviewer_id AND G.id NOT IN (SELECT R.reviewer_id FROM reviews R WHERE R.rating NOT IN (?))'
 		conn.query(sql, ["Poor"], function (err, result) {
 		if (err) throw err;
 		const items = result.map(result => ({
