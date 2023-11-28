@@ -538,31 +538,33 @@ app.get('/NoPoorReviews', (req, res) => {
 
 //Query 10 Phase 3
 // Query for Excellent Review Pairs
+//Query 10 Phase 3
+// Query for Excellent Review Pairs
 app.get('/excellentReviewPairs', (req, res) => {
-    const sql = `
+	const sql = `
         SELECT DISTINCT userA, userB
         FROM (
             SELECT R1.reviewer_id AS userA, R2.reviewer_id AS userB
             FROM reviews R1
             JOIN reviews R2 ON R1.item_id = R2.item_id
-            WHERE R1.review_text = 'Excellent' AND R2.review_text = 'Excellent'
+            WHERE R1.rating = 'Excellent' AND R2.rating = 'Excellent'
             GROUP BY R1.reviewer_id, R2.reviewer_id
             HAVING COUNT(R1.item_id) = (SELECT COUNT(DISTINCT item_id) FROM reviews WHERE reviewer_id = R1.reviewer_id)
         ) AS excellentReviewPairs
     `;
 
-    conn.query(sql, (error, results) => {
-        if (error) {
-            console.error('Error fetching excellent review pairs:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        } else {
-            const pairs = results.map(result => ({
-                userA: result.userA,
-                userB: result.userB,
-            }));
-            res.json({ pairs });
-        }
-    });
+	conn.query(sql, (error, results) => {
+		if (error) {
+			console.error('Error fetching excellent review pairs:', error);
+			res.status(500).json({ error: 'Internal Server Error' });
+		} else {
+			const pairs = results.map(result => ({
+				userA: result.userA,
+				userB: result.userB,
+			}));
+			res.json({ pairs });
+		}
+	});
 });
 
 
