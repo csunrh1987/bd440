@@ -468,7 +468,7 @@ app.get('/nonExcellentUsers', (req, res) => {
             JOIN registration r ON u.user_id = r.id
             WHERE rev.rating = 'Excellent'
             GROUP BY r.username, u.item_id
-            HAVING COUNT(DISTINCT rev.reviewer_id) >= 3
+            HAVING COUNT(rev.reviewer_id) >= 3
         )
     `;
 
@@ -516,6 +516,7 @@ app.get('/allpoor', (req, res) =>{
 			
 });
 
+//Query 9 phase 3
 app.get('/NoPoorReviews', (req, res) => {
 	const sql = `
 		SELECT G.username, R.item_id AS item, R.rating
@@ -543,8 +544,7 @@ app.get('/NoPoorReviews', (req, res) => {
 });
 
 
-//Query 10 Phase 3
-// Query for Excellent Review Pairs
+
 //Query 10 Phase 3
 // Query for Excellent Review Pairs
 app.get('/excellentReviewPairs', (req, res) => {
