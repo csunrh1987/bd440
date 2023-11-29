@@ -544,20 +544,19 @@ app.get('/NoPoorReviews', (req, res) => {
 });
 
 
-
-//Query 10 Phase 3
-// Query for Excellent Review Pairs
+//Query 10 phase 3
 app.get('/excellentReviewPairs', (req, res) => {
 	const sql = `
-        SELECT DISTINCT userA, userB
-        FROM (
-            SELECT R1.reviewer_id AS userA, R2.reviewer_id AS userB
-            FROM reviews R1
-            JOIN reviews R2 ON R1.item_id = R2.item_id
-            WHERE R1.rating = 'Excellent' AND R2.rating = 'Excellent'
-            GROUP BY R1.reviewer_id, R2.reviewer_id
-            HAVING COUNT(R1.item_id) = (SELECT COUNT(DISTINCT item_id) FROM reviews WHERE reviewer_id = R1.reviewer_id)
-        ) AS excellentReviewPairs
+        SELECT DISTINCT R1.reviewer_id AS userA, R2.reviewer_id AS userB,
+            U1.username AS userAUsername, U2.username AS userBUsername
+        FROM reviews R1
+        JOIN reviews R2 ON R1.item_id = R2.item_id
+        JOIN registration U1 ON R1.reviewer_id = U1.id
+        JOIN registration U2 ON R2.reviewer_id = U2.id
+        WHERE R1.rating = 'Excellent' AND R2.rating = 'Excellent' AND R1.reviewer_id < R2.reviewer_id
+        GROUP BY userA, userB
+        HAVING COUNT(DISTINCT R1.item_id) = (SELECT COUNT(DISTINCT item_id) FROM reviews WHERE reviewer_id = userA)
+            AND COUNT(DISTINCT R2.item_id) = (SELECT COUNT(DISTINCT item_id) FROM reviews WHERE reviewer_id = userB);
     `;
 
 	conn.query(sql, (error, results) => {
@@ -568,6 +567,8 @@ app.get('/excellentReviewPairs', (req, res) => {
 			const pairs = results.map(result => ({
 				userA: result.userA,
 				userB: result.userB,
+				userAUsername: result.userAUsername,
+				userBUsername: result.userBUsername,
 			}));
 			res.json({ pairs });
 		}
