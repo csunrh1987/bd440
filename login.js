@@ -123,7 +123,7 @@ app.post('/auth', (req, res) => {
 				res.redirect('/landing');
 			}
 			else{
-				res.send("wrong.");
+				res.send("<h1>Username or password is wrong.</h1><a href='/login'>Click to go back</a>");
 			}
 			res.end();
 		});
@@ -191,55 +191,61 @@ app.post('/searchcategory', (req, res) => {
 
 // Handle the review submission
 app.post('/submitreview', (req, res) => {
-	console.log('Session user_id:', req.session.user_id); 
 	// Check if the user is authenticated
 	if (!req.session.username) {
 		return res.status(401).send('Unauthorized. Please log in.');
 	}
 
 	const { item_id, rating, reviewText } = req.body;
-	const reviewer_id = req.session.user_id;
 	const today = makeDate();
-
-	// Check if the user has already submitted three reviews today
-	conn.query('SELECT COUNT(*) AS reviewCount FROM reviews WHERE reviewer_id = ? AND date = ?', [reviewer_id, today], (err, result) => {
+	const idsql = 'SELECT id FROM registration WHERE username = ?'
+	
+	conn.query(idsql, [req.session.username], (err, idresult) => { 
+		if (err) throw err;
+		let data=JSON.parse(JSON.stringify(idresult));
+		userid = (data[0].id);
+		console.log(userid);
+		
+		conn.query('SELECT COUNT(*) AS reviewCount FROM reviews WHERE reviewer_id = ? AND date = ?', [userid, today], (err, result) => {
 		if (err) {
-			return res.status(500).send(err);
-		}
-
-		const data = JSON.parse(JSON.stringify(result));
-		const reviewCountToday = data[0].reviewCount;
-
-		if (reviewCountToday >= 3) {
-			return res.status(403).send('You have already submitted three reviews today.');
-		}
-
-		// Check if the user is the creator of the item
-		conn.query('SELECT user_id FROM useritem WHERE item_id = ?', [item_id], (err, result) => {
-			if (err) {
 				return res.status(500).send(err);
 			}
 
-			const itemData = JSON.parse(JSON.stringify(result));
-			const itemOwner = itemData[0].user_id;
+			const data = JSON.parse(JSON.stringify(result));
+			const reviewCountToday = data[0].reviewCount;
 
-			if (itemOwner === reviewer_id) {
-				return res.status(403).send("You can't review your own item.");
+			if (reviewCountToday >= 3) {
+				return res.status(403).send('You have already submitted three reviews today.');
 			}
 
-			// Insert the review into the database
-			const sql = 'INSERT INTO reviews (item_id, rating, review_text, reviewer_id, date) VALUES (?, ?, ?, ?, ?)';
-			conn.query(sql, [item_id, rating, reviewText, reviewer_id, today], (err, result) => {
+			// Check if the user is the creator of the item
+			conn.query('SELECT user_id FROM useritem WHERE item_id = ?', [item_id], (err, result) => {
 				if (err) {
 					return res.status(500).send(err);
 				}
-				console.log('Review added to the database.');
-				return res.status(200).send('Review added to the database.');
-			});
-		});
-	});
-});
 
+				const itemData = JSON.parse(JSON.stringify(result));
+				console.log(itemData[0].user_id)
+				const itemOwner = itemData[0].user_id;
+				console.log("item owner " + itemOwner + " and userid " + userid)
+
+				if (itemOwner === userid) {
+					return res.status(403).send("You can't review your own item.");
+				}
+
+				// Insert the review into the database
+				const sql = 'INSERT INTO reviews (item_id, rating, review_text, reviewer_id, date) VALUES (?, ?, ?, ?, ?)';
+				conn.query(sql, [item_id, rating, reviewText, userid, today], (err, result) => {
+					if (err) {
+						return res.status(500).send(err);
+					}
+					console.log('Review added to the database.');
+					return res.status(200).send('Review added to the database.');
+				});
+			});
+		})
+	})
+});
 // Creating a review table
 app.post('/createReviewTable', (req, res) => {
 	const sql = 'CREATE TABLE IF NOT EXISTS reviews (id INT AUTO_INCREMENT PRIMARY KEY, item_id INT, rating VARCHAR(20), review_text TEXT, reviewer_id INT, date DATE)';
