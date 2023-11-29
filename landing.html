@@ -366,28 +366,33 @@
 
 
 
+		<!-- Query 10 Phase 3 -->
 		<div>
-	<!--Query 10 Phase 3-->
-			<h2>
-				Query 10 - List a user pair (A, B) such that they always gave each other "excellent" reviews for every single
-				item they posted.
-			</h2>
-			<!--Button for Query 10 Phase 3-->
+			<h2>Query 10-List user pairs (A, B) with "excellent" reviews for every item they posted:</h2>
+
+			<!-- Button for Query 10 Phase 3 -->
 			<button id="excellentReviewPairsBtn" type="button">Show Excellent Review Pairs</button>
 
+			<!-- Table for displaying user pairs -->
 			<table id="excellentReviewPairsResult">
+				
 				<!-- Table headers -->
 				<thead>
 					<tr>
-						<th>User A</th>
-						<th>User B</th>
+						<th style="width: 150px;">First User ID</th>
+						<th style="width: 150px;">Second User ID</th>
+						<th style="width: 150px;">First Users Username</th>
+						<th style="width: 150px;">Second Users Username</th>
 					</tr>
 				</thead>
+
 				<!-- Table body (will be populated dynamically) -->
-				<tbody>
+				<tbody id="excellentReviewPairsResultBody">
 				</tbody>
 			</table>
 		</div>
+
+		<!--Javier End -->
 	<!--Javier End -->
 		
 		<hr>
@@ -889,35 +894,39 @@
                     });
             });
 
-		/*Code for Query 10*/
-			document.getElementById('excellentReviewPairsBtn').addEventListener('click', function () {
-				fetch('/excellentReviewPairs', {
-					method: 'GET',
-					headers: {
-							'Content-Type': 'application/json'
-						},
-					})
-						.then(response => response.json())
-						.then(data => {
-							// Get the table body
-							const tableBody = document.getElementById('excellentReviewPairsResult').getElementsByTagName('tbody')[0];
+			/*Code for Query 10*/
 
-							// Clear existing rows
-							tableBody.innerHTML = '';
+            
+            document.getElementById('excellentReviewPairsBtn').addEventListener('click', function () {
+                fetch('/excellentReviewPairs', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Data received:', data); 
+                        const tableBody = document.getElementById('excellentReviewPairsResultBody');
+                        tableBody.innerHTML = '';
 
-							// Populate the table dynamically
-							data.pairs.forEach(pair => {
-								const row = tableBody.insertRow();
-								const cellA = row.insertCell(0);
-								const cellB = row.insertCell(1);
-								cellA.textContent = pair.userA;
-								cellB.textContent = pair.userB;
-							});
-						})
-						.catch(error => {
-							console.error('Error fetching excellent review pairs:', error);
-						});
-				});
+                        data.pairs.forEach(pair => {
+                            const row = tableBody.insertRow();
+                            const userACell = row.insertCell(0);
+                            const userBCell = row.insertCell(1);
+                            const userAUsernameCell = row.insertCell(2);
+                            const userBUsernameCell = row.insertCell(3);
+
+                            userACell.textContent = pair.userA;
+                            userBCell.textContent = pair.userB;
+                            userAUsernameCell.textContent = pair.userAUsername;
+                            userBUsernameCell.textContent = pair.userBUsername;
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching excellent review pairs:', error);
+                    });
+            });
 
 		
 
