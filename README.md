@@ -1,4 +1,4 @@
-COMP 440 - Course Project: Phase 1 
+#COMP 440 - Course Project: Phase 1 
 Fall 2023 
 
 Part 1 (Completed)
